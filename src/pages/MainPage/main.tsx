@@ -41,28 +41,30 @@ export const MainPage = () => {
                         type="text"
                         value={emailText}
                         onChange={handleEmailChange}
-                        placeholder="Enter your username"
+                        placeholder="Correo electrónico"
                         label="Username"
                         id="username-input"
-                        className={styles.customInput}
+                        className={styles.customInputBorder}
+                        labelClassName={styles.customLabel}
                     />
                     <InputComponent
                         type="password"
                         value={passwordText}
                         onChange={handlePasswordChange}
-                        placeholder="Enter your password"
-                        label="Password"
+                        placeholder="Contraseña"
+                        label="Contraseña"
                         id="password-input"
-                        className={styles.customInput}
+                        className={styles.customInputBorder}
+                        labelClassName={styles.customLabel}
                     />
                     <p className={styles.forgotPassword}>¿Olvidaste tu contraseña?</p>
                 </div>
                 <div className={styles.bottomContainer}>
                     <ButtonComponent
                         text="Iniciar Sesión"
-                        onClick={() => { }} // Empty onClick handler since the form's onSubmit will handle it
+                        onClick={() => { }}
                         className={styles.customButton}
-                        type="submit" // Set the button type to "submit"
+                        type="submit"
                     />
                 </div>
             </form>

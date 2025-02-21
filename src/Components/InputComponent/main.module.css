@@ -1,17 +1,19 @@
 .inputContainer {
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  text-align: left;
 }
 
 .inputWrapper {
   position: relative;
   display: flex;
-  width: 100%; /* Ensure the wrapper takes full width */
+  width: 100%;
 }
 
 .input {
@@ -20,12 +22,12 @@
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  padding-right: 40px; /* Add padding to the right to prevent text overlap with the button */
+  padding-right: 40px;
 }
 
 .showPasswordButton {
   position: absolute;
-  right: 0.5rem; /* Position the button at the right */
+  right: 0.5rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -41,6 +43,6 @@
 }
 
 .passwordIcon {
-  width: 20px; /* Adjust size as needed */
+  width: 20px;
   height: 20px;
 }

@@ -13,7 +13,10 @@ export default function InputComponent({
     label = "",
     disabled = false,
     id = "",
-}: IInputProps) {
+    labelClassName = "", // Add this prop
+    labelStyle = {}, // Add this prop
+    style = {}, // Add this prop
+}: IInputProps & { labelClassName?: string; labelStyle?: React.CSSProperties; style?: React.CSSProperties }) {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -25,7 +28,7 @@ export default function InputComponent({
     return (
         <div className={styles.inputContainer}>
             {label && (
-                <label htmlFor={id} className={styles.label}>
+                <label htmlFor={id} className={`${styles.label} ${labelClassName}`} style={labelStyle}>
                     {label}
                 </label>
             )}
@@ -38,6 +41,7 @@ export default function InputComponent({
                     className={`${styles.input} ${className}`}
                     disabled={disabled}
                     id={id}
+                    style={style} // Apply custom styles
                 />
                 {type === "password" && (
                     <button

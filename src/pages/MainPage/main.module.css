@@ -1,11 +1,11 @@
 .main {
   display: flex;
-  min-height: 70%; /* min-h-screen */
+  min-height: 70%;
   min-width: 80%;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 6rem; /* p-24 - assuming a default Tailwind spacing scale where 4 = 1rem */
+  padding: 6rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -15,8 +15,8 @@
 .formContainer {
   background-color: white;
   padding: 2rem;
-  border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 40em;
   display: flex;
@@ -29,11 +29,37 @@
   align-items: center;
   margin-bottom: 1rem;
   flex-direction: column;
-  height: 20%;
+  height: 10em;
   width: 100%;
 }
 
-.logoContainer{
+.mediumContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-height: 10em;
+  min-width: 10em;
+  text-align: left;
+}
+
+.forgotPassword {
+  color: var(--darkBlue);
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: left;
+  align-self: flex-start;
+  width: 100%;
+  cursor: pointer;
+}
+.bottomContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 5em;
+  width: 100%;
+}
+
+.logoContainer {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,4 +86,47 @@
   justify-content: center;
   align-items: center;
   height: 50%;
+  width: 100%;
+}
+
+.header {
+  font-weight: 300;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.customInput {
+  color: var(--darkBlue);
+  font-size: 1rem;
+}
+
+.customLabel {
+  color: var(--darkBlue);
+  font-weight: 300;
+  font-size: 1.2rem;
+}
+
+.customInputBorder {
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--lightBlue);
+}
+
+.customButton {
+  background-color: var(--lightBlue);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  height: 3em;
+}
+
+.customButton:hover {
+  background-color: var(--darkBlue);
+  scale: 1.1;
+  transition: 0.3s ease;
+  cursor: pointer;
 }
