@@ -43,7 +43,7 @@ export const MainPage = () => {
                             value={emailText}
                             onChange={handleEmailChange}
                             placeholder="Correo electrónico"
-                            label="Username"
+                            label="Correo electrónico"
                             id="username-input"
                             className={styles.customInputBorder}
                             labelClassName={styles.customLabel}
