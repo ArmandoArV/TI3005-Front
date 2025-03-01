@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MainPage } from './pages/MainPage/main';
+import { DocumentosProveedor } from './pages/AdminPanelHome/ValidateDocs/ValidateDocs';
 import './App.css';
 
 function App() {
@@ -11,6 +12,10 @@ function App() {
           <Route
             path='/'
             element={<MainPage />}
+          ></Route>
+          <Route
+            path='/documentosProveedor'
+            element={<DocumentosProveedor />}
           ></Route>
         </Routes>
       </Router>
