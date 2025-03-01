@@ -3,7 +3,7 @@ import styles from "./ValidateDocs.module.css";
 import InputComponent from "../../../Components/InputComponent/InputComponent";
 import FileUploadComponent from "../../../Components/FileUploadComponent/FileUploadComponent";
 import ButtonComponent from "../../../Components/ButtonComponent/ButtonComponent";
-
+import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
 
 export const DocumentosProveedor = () => {
     const [name, setName] = useState<string>("Test");
@@ -17,7 +17,9 @@ export const DocumentosProveedor = () => {
     }
 
     return (
+
         <main className={styles.background}>
+            <HeaderComponent />
             <div className={styles.main}>
                 <div className={styles.formContainerExternal}>
                     <div className={styles.welcomeContainer}>
