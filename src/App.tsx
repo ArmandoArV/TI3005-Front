@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MainPage } from './pages/MainPage/main';
-import { DocumentosProveedor } from './pages/AdminPanelHome/ValidateDocs/ValidateDocs';
+import { DocumentosProveedor } from './pages/AdminPanelHome/ValidateDocsProvider/ValidateDocs';
+import { DocumentosCliente } from './pages/AdminPanelHome/ValidateDocsCustomer/ValidateDocsCustomer';
+import { HomeAdmin } from './pages/AdminPanelHome/Home/HomeAdmin';
 import './App.css';
 
 function App() {
@@ -12,11 +14,20 @@ function App() {
           <Route
             path='/'
             element={<MainPage />}
-          ></Route>
+          />
           <Route
             path='/documentosProveedor'
             element={<DocumentosProveedor />}
-          ></Route>
+          />
+          <Route
+            path='/documentosCliente'
+            element={<DocumentosCliente />}
+          />
+          <Route
+            path='/homeAdmin'
+            element={<HomeAdmin />}
+          />
+
         </Routes>
       </Router>
     </div>
