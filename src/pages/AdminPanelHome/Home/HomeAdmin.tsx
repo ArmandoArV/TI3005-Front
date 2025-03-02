@@ -11,9 +11,9 @@ const data = [
         managerName: "Nombre del encargado 1",
         fecha: "2023-10-15",
         documents: [
-            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF" },
-            { title: "Constancia situación fiscal", status: "Por validar" as const, fileType: "PDF" },
-            { title: "Contrato", status: "Por validar" as const, fileType: "PDF" },
+            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
+            { title: "Constancia situación fiscal", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
+            { title: "Contrato", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
         ],
     },
     {
@@ -22,8 +22,8 @@ const data = [
         managerName: "Nombre del encargado 2",
         fecha: "2023-10-16",
         documents: [
-            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF" },
-            { title: "Contrato", status: "Por validar" as const, fileType: "PDF" },
+            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF" , fileUrl: "https://www.orimi.com/pdf-test.pdf" },
+            { title: "Contrato", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
         ],
     },
     {

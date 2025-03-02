@@ -7,6 +7,8 @@ import styles from "./main.module.css";
 import expandIcon from "../../resources/expand-icon.png"; // Image for collapsed state
 import collapseIcon from "../../resources/collapse-icon.png"; // Image for expanded state
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
+import { FileModal } from "../FileModalComponent/FileModalComponent";
+
 interface PendingTableProps {
     data: IClientRow[];
     tableTitle: string;
@@ -32,6 +34,7 @@ const getStatusColor = (status: DocumentStatus) => {
 export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [modalData, setModalData] = useState<{ documentTitle: string; fileUrl: string } | null>(null);
 
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -39,6 +42,14 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
 
     const toggleRow = (index: number) => {
         setExpandedRow(expandedRow === index ? null : index);
+    };
+
+    const openModal = (documentTitle: string, fileUrl: string) => {
+        setModalData({ documentTitle, fileUrl });
+    };
+
+    const closeModal = () => {
+        setModalData(null);
     };
 
     if (!data.length) {
@@ -101,10 +112,8 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
                                                     <div style={{ marginTop: "5px" }}>
                                                         <ButtonComponent
                                                             text={`Ver ${document.fileType}`} // Corrected template literal
-                                                            onClick={() => {
-                                                                // Handle download logic here
-                                                                console.log(`Downloading ${document.title}`);
-                                                            }}
+                                                            onClick={() => openModal(document.title, document.fileUrl || "")}
+                                                            className={styles.customButton}
                                                         />
                                                     </div>
                                                 </div>
@@ -118,6 +127,13 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
                 </tbody>
             </table>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            {modalData && (
+                <FileModal
+                    documentTitle={modalData.documentTitle}
+                    fileUrl={modalData.fileUrl}
+                    onClose={closeModal}
+                />
+            )}
         </div>
     );
 };
