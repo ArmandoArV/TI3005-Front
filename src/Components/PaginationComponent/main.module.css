@@ -1,0 +1,29 @@
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: row;
+}
+
+.paginationButton {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+}
+
+.paginationButton img {
+  width: 100%;
+  height: 100%;
+}
+
+.paginationButton:hover {
+  background-color: #f0f0f0;
+  scale: 1.1;
+  transition: 0.3s;
+  border-radius: 50%;
+}
