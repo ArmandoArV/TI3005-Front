@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./main.module.css";
 import InputComponent from "../../Components/InputComponent/InputComponent";
-import logo from "../../resources/Logo.png";
+import logo from "../../resources/logoOriginal.png";
 import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
 import { regex } from "../../Constants";
 import { showErrorAlert, showSuccessAlert } from "../../Util/AlertUtil";
