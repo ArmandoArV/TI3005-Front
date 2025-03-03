@@ -1,26 +1,40 @@
-/* Container */
-.main {
-    display: flex;
-    min-height: 70vh;
-    width: 80%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 4rem;
-    margin-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  /* Table Styles */
-  .pending-table {
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  
-  
+.fullContainer {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  width: 100%;
+  height: 10vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #003f7f;
+  z-index: 100;
+}
+
+.contentContainer {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 10vh); /* Full height minus header */
+  margin-top: 10vh; /* Push content under fixed header */
+  overflow: hidden;
+}
+
+.lateralNavbarContainer {
+  width: 15%;
+  min-width: 200px;
+  max-width: 250px;
+  background-color: #f8f9fa;
+  overflow-y: none;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.mainContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2rem;
+  background-color: white;
+}

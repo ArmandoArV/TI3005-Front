@@ -2,6 +2,8 @@ import React from "react";
 import styles from "./main.module.css";
 import { PendingTable } from "../../../Components/PendingTableComponent/PendingTableComponent";
 import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
+import LateralNavbarComponent from "../../../Components/LateralNavbarComponent/LateralNavbarComponent";
+import { lateralNavbarElements } from "../../../Constants";
 
 // Mock data for the PendingTable
 const data = [
@@ -22,7 +24,7 @@ const data = [
         managerName: "Nombre del encargado 2",
         fecha: "2023-10-16",
         documents: [
-            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF" , fileUrl: "https://www.orimi.com/pdf-test.pdf" },
+            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
             { title: "Contrato", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
         ],
     },
@@ -37,11 +39,17 @@ const data = [
 
 export const HomeAdmin = () => {
     return (
-        <main className={styles.background}>
+        <div className={styles["fullContainer"]}>
             <HeaderComponent />
-            <div className={styles.main}>
-                <PendingTable data={data} tableTitle="Documentos Pendientes" />
+            <div className={styles["contentContainer"]}>
+                <div className={styles["lateralNavbarContainer"]}>
+                    <LateralNavbarComponent options={lateralNavbarElements} />
+                </div>
+                <div className={styles["mainContent"]}>
+                    <h2>Dashboard</h2>
+                    <PendingTable data={data} tableTitle="Documentos Pendientes" />
+                </div>
             </div>
-        </main>
+        </div>
     );
 };
