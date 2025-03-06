@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./main.module.css";
 import InputComponent from "../../Components/InputComponent/InputComponent";
 import logo from "../../resources/logoOriginal.png";
 import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
 import { regex } from "../../Constants";
 import { showErrorAlert, showSuccessAlert } from "../../Util/AlertUtil";
+import { API_URL } from "../../Constants";
 
 export const MainPage = () => {
     const [emailText, setEmailText] = useState("");
     const [passwordText, setPasswordText] = useState("");
     const [error, setError] = useState("");
+
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmailText(e.target.value);
@@ -22,25 +24,56 @@ export const MainPage = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent the default form submission behavior
 
-        // Validate email
-        if (!regex.email.test(emailText)) {
+
+        // Validate password
+
+
+        if (emailText === "" || passwordText === "") {
+            setError("Please fill all fields");
+            showErrorAlert("Error", "¡Por favor, llene todos los campos!");
+            return;
+        } else if (!regex.email.test(emailText)) {
             setError("Invalid email format");
             showErrorAlert("Error", "Invalid email format");
             return;
-        }
-
-        // Validate password
-        if (!regex.password.test(passwordText)) {
+        } if (!regex.password.test(passwordText)) {
             setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
             showErrorAlert("Error", "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
             return;
+        } else {
+            const loginData = {
+                email: emailText,
+                password: passwordText,
+            };
+
+            const requestData = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+                body: JSON.stringify(loginData),
+            };
+
+
+            fetch(`${API_URL}/login`, requestData)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error("Error");
+                    }
+                })
+                .then((data) => {
+                    showSuccessAlert("Success", "Login successful");
+                    console.log(data);
+                })
+                .catch((error) => {
+                    showErrorAlert("Error", "Invalid email or password");
+                    console.log(error);
+                });
         }
 
-        setError(""); // Clear any previous errors
-        showSuccessAlert("Success", "Form submitted successfully!");
-        console.log("Form submitted!");
-        console.log("Email:", emailText);
-        console.log("Password:", passwordText);
     };
 
     return (

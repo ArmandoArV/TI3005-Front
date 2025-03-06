@@ -11,11 +11,14 @@
   margin-bottom: 0.5rem;
   font-weight: bold;
   text-align: left;
+  width: 100%;
 }
 
 .inputWrapper {
   position: relative;
   display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
 }
 
