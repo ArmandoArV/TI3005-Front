@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styles from "./main.module.css";
 import { PendingTable } from "../../../Components/PendingTableComponent/PendingTableComponent";
 import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
@@ -6,68 +6,96 @@ import LateralNavbarComponent from "../../../Components/LateralNavbarComponent/L
 import { lateralNavbarElements } from "../../../Constants";
 import { API_URL } from "../../../Constants";
 import AuthRoute from "../../../Components/AuthComponent/AuthComponent";
+import { FetchedData } from "../../../Interfaces/IFetchedDataDocuments";
+import { IClientRow } from "../../../Interfaces/IClientRow";
+import { IDocument } from "../../../Interfaces/IDocument";
 
-// Mock data for the PendingTable
-const data = [
-    {
-        status: "Por validar" as const, // Explicitly type as DocumentStatus
-        clientName: "Nombre del cliente 1",
-        managerName: "Nombre del encargado 1",
-        fecha: "2023-10-15",
-        documents: [
-            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
-            { title: "Constancia situación fiscal", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
-            { title: "Contrato", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
-        ],
-    },
-    {
-        status: "Incompleto" as const, // Explicitly type as DocumentStatus
-        clientName: "Nombre del cliente 2",
-        managerName: "Nombre del encargado 2",
-        fecha: "2023-10-16",
-        documents: [
-            { title: "Opinión de cumplimiento", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
-            { title: "Contrato", status: "Por validar" as const, fileType: "PDF", fileUrl: "https://www.orimi.com/pdf-test.pdf" },
-        ],
-    },
-    {
-        status: "Sin entrega" as const, // Explicitly type as DocumentStatus
-        clientName: "Nombre del cliente 3",
-        managerName: "Nombre del encargado 3",
-        fecha: "2023-10-17",
-        documents: [],
-    },
-];
+
+const extractFileId = (fileUrl: string): string | null => {
+    const regex = /\/d\/([^\/]+)\/view/;
+    const match = fileUrl.match(regex);
+    return match ? match[1] : null;
+};
+
+const transformFileUrl = (fileUrl: string): string | null => {
+    const fileId = extractFileId(fileUrl);
+    return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : null;
+};
+
+const transformData = (fetchedData: FetchedData): IClientRow[] => {
+    return fetchedData.clients.map((clientData) => {
+        const { client, vendor, documents } = clientData;
+
+        // Map documents to the IDocument structure
+        const transformedDocuments: IDocument[] = documents.map((doc) => ({
+            title: doc.documentType,
+            status: doc.validStatus,
+            fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
+            fileType: doc.fileType,
+        }));
+
+        // Determine the latest timestamp for the "fecha" field
+        const latestTimestamp = documents.reduce((latest, doc) => {
+            const timestamp = doc.uploadTimestamp || doc.requestedTimestamp;
+            return timestamp > latest ? timestamp : latest;
+        }, "");
+
+        return {
+            clientName: client.name,
+            managerName: vendor.name,
+            status: client.documentsStatus,
+            documents: transformedDocuments,
+            fecha: latestTimestamp,
+        };
+    });
+};
 
 export const HomeAdmin = () => {
-    const fetchDocuments = useCallback(() => {
-        fetch(`${API_URL}/documents/pending`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Error fetching pending documents");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-        , []);
+    const [data, setData] = useState<IClientRow[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Memoize the fetchData function using useCallback
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await fetch(`${API_URL}/dashboard/clientsPending`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`,
+                },
+            }
+
+            );
+            const fetchedData: FetchedData = await response.json();
+
+            if (fetchedData.success) {
+                const transformedData = transformData(fetchedData);
+                setData(transformedData);
+            } else {
+                setError(fetchedData.message || "Failed to fetch data");
+            }
+        } catch (err) {
+            setError("An error occurred while fetching data");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        fetchDocuments();
-    }, [fetchDocuments]);
+        fetchData();
+    }, [fetchData]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
-        // Wrap the content in the AuthRoute component
         <AuthRoute>
             <div className={styles["fullContainer"]}>
                 <HeaderComponent />

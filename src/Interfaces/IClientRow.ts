@@ -2,9 +2,9 @@ import { IDocument } from "./IDocument";
 import { DocumentStatus } from "./IDocument";
 
 export interface IClientRow {
-  status: DocumentStatus;
   clientName: string;
   managerName: string;
-  fecha: string;
+  status: DocumentStatus;
   documents: IDocument[];
+  fecha: string; // Use the latest document's uploadTimestamp or requestedTimestamp
 }

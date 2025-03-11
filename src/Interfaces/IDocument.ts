@@ -6,7 +6,7 @@ export type DocumentStatus =
 
 export interface IDocument {
   title: string;
-  fileType: string;
   status: DocumentStatus;
-  fileUrl?: string | null;
+  fileUrl: string | null;
+  fileType: string | null;
 }
