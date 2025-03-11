@@ -37,12 +37,6 @@ export const MainPage = () => {
             return;
         }
 
-        if (!regex.password.test(passwordText)) {
-            setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
-            showErrorAlert("Error", "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
-            return;
-        }
-
         // Prepare login request payload
         const loginData = {
             email: emailText,
@@ -64,6 +58,9 @@ export const MainPage = () => {
             const data = await response.json();
             showSuccessAlert("Success", "Login successful");
             console.log(data);
+            document.cookie = `token=${data.token}; path=/`;
+            window.location.href = "/homeAdmin";
+
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
             showErrorAlert("Error", errorMessage);
