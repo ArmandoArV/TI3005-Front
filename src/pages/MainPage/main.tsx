@@ -21,60 +21,58 @@ export const MainPage = () => {
         setPasswordText(e.target.value);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent the default form submission behavior
 
-
-        // Validate password
-
-
-        if (emailText === "" || passwordText === "") {
+        // Validate email and password
+        if (!emailText || !passwordText) {
             setError("Please fill all fields");
             showErrorAlert("Error", "¡Por favor, llene todos los campos!");
             return;
-        } else if (!regex.email.test(emailText)) {
+        }
+
+        if (!regex.email.test(emailText)) {
             setError("Invalid email format");
             showErrorAlert("Error", "Invalid email format");
             return;
-        } if (!regex.password.test(passwordText)) {
+        }
+
+        if (!regex.password.test(passwordText)) {
             setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
             showErrorAlert("Error", "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
             return;
-        } else {
-            const loginData = {
-                email: emailText,
-                password: passwordText,
-            };
+        }
 
-            const requestData = {
+        // Prepare login request payload
+        const loginData = {
+            email: emailText,
+            password: passwordText,
+        };
+        try {
+            const response = await fetch(`${API_URL}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
                 },
                 body: JSON.stringify(loginData),
-            };
+            });
 
+            if (!response.ok) {
+                throw new Error("Invalid email or password");
+            }
 
-            fetch(`${API_URL}/login`, requestData)
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error("Error");
-                    }
-                })
-                .then((data) => {
-                    showSuccessAlert("Success", "Login successful");
-                    console.log(data);
-                })
-                .catch((error) => {
-                    showErrorAlert("Error", "Invalid email or password");
-                    console.log(error);
-                });
+            const data = await response.json();
+            showSuccessAlert("Success", "Login successful");
+            console.log(data);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+            showErrorAlert("Error", errorMessage);
+            console.error("Login error:", error);
         }
 
     };
+
+
 
     return (
         <main className={styles.background}>
