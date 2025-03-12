@@ -25,12 +25,15 @@ const transformFileUrl = (fileUrl: string): string | null => {
   return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : null;
 };
 
-export const transformData = (fetchedData: IClientDocumentsResponse): IClientRow[] => {
+export const transformData = (
+  fetchedData: IClientDocumentsResponse
+): IClientRow[] => {
   return fetchedData.clients.map((clientData) => {
     const { client, vendor, documents } = clientData;
 
     // Map documents to the IDocument structure
     const transformedDocuments: IDocument[] = documents.map((doc) => ({
+      documentId: doc.id,
       title: doc.documentType as string,
       status: doc.validStatus as DocumentStatus,
       fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
@@ -65,6 +68,7 @@ export const transformDataProviders = (
 
     // Map documents to the IDocument structure
     const transformedDocuments: IDocument[] = documents.map((doc) => ({
+      documentId: doc.id,
       title: doc.documentType as string,
       status: doc.validStatus as DocumentStatus,
       fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
@@ -170,7 +174,7 @@ export const HomeAdmin = () => {
 
       if (fetchedData.success) {
         const transformedData = transformData(fetchedData);
-        console.log("transformedData",transformedData);
+        console.log("transformedData", transformedData);
         setDataCliente(transformedData);
       } else {
         setError(fetchedData.message || "Failed to fetch data");
