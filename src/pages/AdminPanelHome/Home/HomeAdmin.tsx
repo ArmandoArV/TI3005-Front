@@ -12,6 +12,7 @@ import { DocumentStatus, IDocument } from "../../../Interfaces/IDocument";
 import {
   IProviderDocumentsResponse,
 } from "../../../Interfaces/IProviderInterfaces";
+import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingComponent";
 import FilterComponent from "../../../Components/FilterComponent/FilterComponent";
 import SearchComponent from "../../../Components/SearchComponent/SearchComponent";
 const extractFileId = (fileUrl: string): string | null => {
@@ -192,7 +193,7 @@ export const HomeAdmin = () => {
   }, [fetchClientData, fetchProviderData]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingComponent />;
   }
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -202,7 +203,6 @@ export const HomeAdmin = () => {
     <AuthRoute>
       <div className={styles["fullContainer"]}>
         <HeaderComponent />
-
         <div className={styles["contentContainer"]}>
           <div className={styles["lateralNavbarContainer"]}>
             <LateralNavbarComponent options={lateralNavbarElements} />

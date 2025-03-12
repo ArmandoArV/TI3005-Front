@@ -24,7 +24,7 @@ export const FileModal: React.FC<IFileModalProps> = ({ documentTitle, fileUrl, o
         setShowReasonModal(false);
     }
 
-    console.log("FileUrl",fileUrl);
+    console.log("FileUrl", fileUrl);
 
     return (
         <div className={styles["modal-container"]}>
