@@ -1,31 +1,62 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import styles from "./main.module.css";
 import { ReasonModalComponent } from "../ReasonModalComponent/ReasonModalComponent";
-
+import { API_URL } from "../../Constants";
+import { showSuccessAlert, showErrorAlert } from "../../Util/AlertUtil";
 interface IFileModalProps {
     documentTitle: string;
     fileUrl: string;
     onClose: () => void;
-    id : string;
-    ownerId : string;
-    ownerType : string;
+    id: string;
+    ownerId: string;
+    ownerType: string;
 }
 
-export const FileModal: React.FC<IFileModalProps> = ({ documentTitle, fileUrl, onClose }) => {
+export const FileModal: React.FC<IFileModalProps> = ({ documentTitle, fileUrl, onClose, id, ownerId, ownerType }) => {
     const [showReasonModal, setShowReasonModal] = useState(false);
 
     const handleApprove = () => {
         console.log("Approve");
-    }
+    };
 
     const handleReject = () => {
         setShowReasonModal(true);
-    }
+    };
 
     const handleCloseReasonModal = () => {
         setShowReasonModal(false);
-    }
+    };
+
+    const handleSendReason = useCallback(async (ownerId: string, id: string, ownerType: string, reason: string) => {
+        console.log("Send Reason", { ownerId, id, ownerType, reason });
+        const requestBody = {
+            id: id,
+            rejectedReason: reason,
+            ownerId: ownerId,
+            ownerType: ownerType,
+        };
+        try {
+            const response = await fetch(`${API_URL}/documents/reject`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${document.cookie.split("=")[1]}`,
+                },
+                body: JSON.stringify(requestBody),
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log("Document rejected successfully");
+                showSuccessAlert("Éxito", "Documento rechazado exitosamente", onClose);
+            } else {
+                console.error("Failed to reject document", result.message);
+                showErrorAlert("Error", "No se pudo rechazar el documento");
+            }
+        } catch (error) {
+            console.error("An error occurred while rejecting the document", error);
+        }
+    }, []);
 
     console.log("FileUrl", fileUrl);
 
@@ -56,7 +87,16 @@ export const FileModal: React.FC<IFileModalProps> = ({ documentTitle, fileUrl, o
                     <iframe src={fileUrl} title={documentTitle} className={styles["file-iframe"]} />
                 </div>
             </div>
-            {showReasonModal && <ReasonModalComponent show={showReasonModal} onClose={handleCloseReasonModal} />}
+            {showReasonModal && (
+                <ReasonModalComponent
+                    show={showReasonModal}
+                    onClose={handleCloseReasonModal}
+                    onSend={handleSendReason}
+                    ownerId={ownerId}
+                    id={id}
+                    ownerType={ownerType}
+                />
+            )}
         </div>
     );
 };

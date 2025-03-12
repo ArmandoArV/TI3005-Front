@@ -170,6 +170,7 @@ export const HomeAdmin = () => {
 
       if (fetchedData.success) {
         const transformedData = transformData(fetchedData);
+        console.log("transformedData",transformedData);
         setDataCliente(transformedData);
       } else {
         setError(fetchedData.message || "Failed to fetch data");

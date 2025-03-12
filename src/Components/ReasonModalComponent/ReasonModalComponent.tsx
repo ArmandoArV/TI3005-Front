@@ -1,15 +1,36 @@
 import React from "react";
 import styles from "./main.module.css";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
+import { showConfirmAlert } from "../../Util/AlertUtil";
+
 interface ReasonModalComponentProps {
     show: boolean;
     onClose: () => void;
-    onSend?: () => void;
+    onSend?: (ownerId: string, id: string, ownerType: string, reason: string) => void;
     reason?: string;
+    ownerId: string;
+    id: string;
+    ownerType: string;
 }
 
-export const ReasonModalComponent: React.FC<ReasonModalComponentProps> = ({ show, onClose, onSend, reason }) => {
+export const ReasonModalComponent: React.FC<ReasonModalComponentProps> = ({ show, onClose, onSend, reason, ownerId, id, ownerType }) => {
     const [reasonText, setReasonText] = React.useState(reason || "");
+
+    const handleSend = () => {
+        showConfirmAlert(
+            "Confirmación",
+            "¿Estás seguro de que quieres enviar esta razón?",
+            "Enviar",
+            async () => {
+                if (onSend) {
+                    await onSend(ownerId, id, ownerType, reasonText);
+                }
+                onClose();
+            }
+        );
+    };
+
+    console.log("ReasonModalComponent", { show, reason, ownerId, id, ownerType });
     return (
         <div className={styles["modal-container"]}>
             <div className={styles.modalContent}>
@@ -28,9 +49,8 @@ export const ReasonModalComponent: React.FC<ReasonModalComponentProps> = ({ show
                         <ButtonComponent text="Cancelar" onClick={onClose} className={styles.cancelButton} />
                     </div>
                     <div className={styles.buttonContainerRight}>
-                        <ButtonComponent text="Guardar" onClick={onSend || (() => { })} className={styles.customButton} />
+                        <ButtonComponent text="Guardar" onClick={handleSend} className={styles.customButton} />
                     </div>
-
                 </div>
             </div>
         </div>

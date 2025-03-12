@@ -35,7 +35,7 @@ const getStatusColor = (status: DocumentStatus) => {
 export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, clientType }) => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [modalData, setModalData] = useState<{ documentTitle: string; fileUrl: string } | null>(null);
+    const [modalData, setModalData] = useState<{ documentTitle: string; fileUrl: string; id: string; ownerId: string; ownerType: string } | null>(null);
 
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -45,15 +45,13 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
         setExpandedRow(expandedRow === index ? null : index);
     };
 
-    const openModal = (documentTitle: string, fileUrl: string) => {
-        setModalData({ documentTitle, fileUrl });
+    const openModal = (documentTitle: string, fileUrl: string, id: string, ownerId: string, ownerType: string) => {
+        setModalData({ documentTitle, fileUrl, id, ownerId, ownerType });
     };
 
     const closeModal = () => {
         setModalData(null);
     };
-
-    console.log("data INFORMATION", data);
 
     return (
         <div className={styles["outer-container"]}>
@@ -115,7 +113,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
                                                         <div style={{ marginTop: "5px" }}>
                                                             <ButtonComponent
                                                                 text={`Ver ${document.fileType}`} // Corrected template literal
-                                                                onClick={() => openModal(document.title, document.fileUrl || "")}
+                                                                onClick={() => openModal(document.title, document.fileUrl || "", row.id.toString(), row.ownerId, row.ownerType)}
                                                                 className={styles.customButton}
                                                             />
                                                         </div>
@@ -144,9 +142,9 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
                     documentTitle={modalData.documentTitle}
                     fileUrl={modalData.fileUrl}
                     onClose={closeModal}
-                    id=""
-                    ownerId=""
-                    ownerType=""
+                    id={modalData.id}
+                    ownerId={modalData.ownerId}
+                    ownerType={modalData.ownerType}
                 />
             )}
         </div>
