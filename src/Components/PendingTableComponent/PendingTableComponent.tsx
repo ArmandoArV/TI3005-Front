@@ -128,40 +128,34 @@ export const PendingTable: React.FC<PendingTableProps> = ({
                   <tr>
                     <td colSpan={6} className={styles["expanded-row"]}>
                       <div className={styles["expanded-row-content"]}>
-                        {row.documents.map(
-                          (document: IDocument, docIndex: number) => (
-                            <div
-                              key={docIndex}
-                              className={styles["document-row"]}
-                            >
-                              <div>{document.title}</div>
-                              <div>
-                                Estatus: {getStatusColor(document.status)}{" "}
-                                {document.status}
-                              </div>
-                              {document.status === "Rechazado" && (
-                                <div>
-                                  Razón de rechazo: {document.rejectionReason}
-                                </div>
-                              )}
-                              <div style={{ marginTop: "5px" }}>
-                                <ButtonComponent
-                                  text={`Ver PDF`} // ${document.fileType}
-                                  onClick={() =>
-                                    openModal(
-                                      document.title,
-                                      document.fileUrl || "",
-                                      document.documentId.toString(),
-                                      row.ownerId,
-                                      row.ownerType
-                                    )
-                                  }
-                                  className={styles.customButton}
-                                />
-                              </div>
+                        {row.documents.map((document: IDocument, docIndex: number) => (
+                          <div key={docIndex} className={styles["document-row"]}>
+                            <p className={styles["document-title"]}>{document.title}</p>
+                            <p className={styles["document-status"]}>
+                              {getStatusColor(document.status)} {document.status}
+                            </p>
+                            {document.status === "Rechazado" && (
+                              <p className={styles["document-rejectionReason"]}>
+                                Razón de rechazo: {document.rejectionReason}
+                              </p>
+                            )}
+                            <div className={styles["document-buttonContainer"]}>
+                              <ButtonComponent
+                                text="Ver PDF"
+                                onClick={() =>
+                                  openModal(
+                                    document.title,
+                                    document.fileUrl || "",
+                                    document.documentId.toString(),
+                                    row.ownerId,
+                                    row.ownerType
+                                  )
+                                }
+                                className={styles.customButton}
+                              />
                             </div>
-                          )
-                        )}
+                          </div>
+                        ))}
                       </div>
                     </td>
                   </tr>
