@@ -11,4 +11,5 @@ export interface IDocument {
   status: DocumentStatus;
   fileUrl: string | null;
   fileType: string | null;
+  rejectionReason?: string | null;
 }

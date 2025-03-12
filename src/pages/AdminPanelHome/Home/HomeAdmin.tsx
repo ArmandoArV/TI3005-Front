@@ -38,6 +38,7 @@ export const transformData = (
       status: doc.validStatus as DocumentStatus,
       fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
       fileType: doc.fileType as string,
+      rejectionReason: doc.rejectedReason || null,
     }));
 
     // Determine the latest timestamp for the "fecha" field
