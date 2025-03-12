@@ -25,7 +25,7 @@ const transformFileUrl = (fileUrl: string): string | null => {
   return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : null;
 };
 
-const transformData = (fetchedData: IClientDocumentsResponse): IClientRow[] => {
+export const transformData = (fetchedData: IClientDocumentsResponse): IClientRow[] => {
   return fetchedData.clients.map((clientData) => {
     const { client, vendor, documents } = clientData;
 
@@ -57,7 +57,7 @@ const transformData = (fetchedData: IClientDocumentsResponse): IClientRow[] => {
   });
 };
 
-const transformDataProviders = (
+export const transformDataProviders = (
   fetchedProvidersResponse: IProviderDocumentsResponse
 ): IClientRow[] => {
   return fetchedProvidersResponse.providers.map((providerData) => {

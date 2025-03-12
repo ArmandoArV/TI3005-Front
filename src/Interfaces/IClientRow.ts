@@ -7,7 +7,7 @@ export interface IClientRow {
   status: DocumentStatus;
   documents: IDocument[];
   fecha: string;
-  id?: number;
-  ownerId?: string;
-  ownerType?: string;
+  id: number;
+  ownerId: string;
+  ownerType: string;
 }
