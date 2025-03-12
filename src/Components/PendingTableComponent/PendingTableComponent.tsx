@@ -12,6 +12,7 @@ import { FileModal } from "../FileModalComponent/FileModalComponent";
 interface PendingTableProps {
     data: IClientRow[];
     tableTitle: string;
+    clientType?: string;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -31,7 +32,7 @@ const getStatusColor = (status: DocumentStatus) => {
     }
 };
 
-export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) => {
+export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, clientType }) => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [modalData, setModalData] = useState<{ documentTitle: string; fileUrl: string } | null>(null);
@@ -63,7 +64,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
                     </tr>
                     <tr className={styles["table-header"]}>
                         <th>Estatus</th>
-                        <th>Cliente</th>
+                        <th>{clientType}</th>
                         <th>Encargado</th>
                         <th>Documentos</th>
                         <th>Fecha</th>

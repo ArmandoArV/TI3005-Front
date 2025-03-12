@@ -134,10 +134,10 @@ export const RejectedDocuments = () => {
                         <h2>Dashboard</h2>
                         <div className={styles["topContainer"]}>
                             <div className={styles[""]}>
-                                <PendingTable data={dataCliente} tableTitle="Documentos Rechazados del Cliente" />
+                                <PendingTable data={dataCliente} tableTitle="Documentos Rechazados del Cliente" clientType="Cliente" />
                             </div>
                             <div className={styles[""]}>
-                                <PendingTable data={dataProveedor} tableTitle="Documentos Rechazados del Proveedor" />
+                                <PendingTable data={dataProveedor} tableTitle="Documentos Rechazados del Proveedor" clientType="Proveedor" />
                             </div>
                         </div>
                         <div className={styles["bottomContainer"]}></div>

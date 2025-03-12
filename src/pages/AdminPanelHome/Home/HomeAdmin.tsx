@@ -11,10 +11,10 @@ import { IClientRow } from "../../../Interfaces/IClientRow";
 import { DocumentStatus, IDocument } from "../../../Interfaces/IDocument";
 import { FetchedProviders } from "../../../Interfaces/IFetchedProviders";
 import {
-  IProviderDashboardRow,
   IProviderDocumentsResponse,
 } from "../../../Interfaces/IProviderInterfaces";
-
+import FilterComponent from "../../../Components/FilterComponent/FilterComponent";
+import SearchComponent from "../../../Components/SearchComponent/SearchComponent";
 const extractFileId = (fileUrl: string): string | null => {
   const regex = /\/d\/([^\/]+)\/view/;
   const match = fileUrl.match(regex);
@@ -90,6 +90,50 @@ export const HomeAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataProveedor, setDataProveedor] = useState<IClientRow[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // Filter state
+  const [filterType, setFilterType] = useState<string>("");
+  const [filterValue, setFilterValue] = useState<string>("");
+
+  const filterOptions = {
+    fechas: Array.from(new Set([...dataCliente.map((item) => item.fecha), ...dataProveedor.map((item) => item.fecha)])), // Get unique fechas
+    encargados: Array.from(new Set([...dataCliente.map((item) => item.managerName), ...dataProveedor.map((item) => item.managerName)])), // Get unique encargados
+    estatus: Array.from(new Set([...dataCliente.map((item) => item.status), ...dataProveedor.map((item) => item.status)])), // Get unique estatus
+  };
+
+  const applyFilter = (data: IClientRow[]) => {
+    let filteredData = data;
+
+    if (filterType && filterValue) {
+      filteredData = filteredData.filter((row) => {
+        switch (filterType) {
+          case "fecha":
+            return row.fecha === filterValue;
+          case "encargado":
+            return row.managerName === filterValue;
+          case "estatus":
+            return row.status === filterValue;
+          default:
+            return true;
+        }
+      });
+    }
+
+    if (searchTerm) {
+      filteredData = filteredData.filter((row) =>
+        row.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.managerName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return filteredData;
+  };
+
+
+  // Filtered data based on selected filters
+  const filteredClienteData = applyFilter(dataCliente);
+  const filteredProveedorData = applyFilter(dataProveedor);
 
   // Memoize the fetchData function using useCallback
   const fetchClientData = useCallback(async () => {
@@ -151,6 +195,9 @@ export const HomeAdmin = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
 
   return (
     <AuthRoute>
@@ -162,17 +209,34 @@ export const HomeAdmin = () => {
           </div>
           <div className={styles["mainContent"]}>
             <h2>Dashboard</h2>
+            <div className={styles["filterContainer"]}>
+              <div className={styles["leftFilterContainer"]}>
+                <FilterComponent
+                  onFilterChange={(type, value) => {
+                    setFilterType(type);
+                    setFilterValue(value);
+                  }}
+                  filterOptions={filterOptions}
+                />
+              </div>
+              <div className={styles["rightFilterContainer"]}>
+                <SearchComponent onSearch={handleSearch} />
+              </div>
+            </div>
+
             <div className={styles["topContainer"]}>
               <div className={styles[""]}>
                 <PendingTable
-                  data={dataCliente}
+                  data={filteredClienteData}
                   tableTitle="Documentos Pendientes del Cliente"
+                  clientType="Cliente"
                 />
               </div>
               <div className={styles[""]}>
                 <PendingTable
-                  data={dataProveedor}
+                  data={filteredProveedorData}
                   tableTitle="Documentos Pendientes del Proveedor"
+                  clientType="Proveedor"
                 />
               </div>
             </div>
