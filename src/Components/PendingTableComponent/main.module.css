@@ -135,3 +135,17 @@
   transition: 0.3s ease;
   cursor: pointer;
 }
+@media (max-width: 767px) {
+  .table-row td:nth-child(2),
+  .table-row td:nth-child(4) {
+    max-width: 20;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: none;
+  }
+
+  .expanded-row-content {
+    flex-direction: column;
+  }
+}

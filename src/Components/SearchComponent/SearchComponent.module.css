@@ -28,3 +28,13 @@
 .search-input::placeholder {
   color: #9ca3af;
 }
+
+@media (max-width: 767px) {
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+}

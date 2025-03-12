@@ -152,7 +152,44 @@
 
 .cancelButton:hover {
   background-color: #a5a8ac;
-    scale: 1.1;
-    transition: 0.3s ease;
-    cursor: pointer;
+  scale: 1.1;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .modal-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .bottomContainer {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+
+  .file-iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mediumContainer {
+    flex-direction: column;
+  }
+  .leftContainer {
+    width: 100%;
+  }
+  .rightContainer {
+    width: 100%;
+  }
+  .leftButtonContainer,
+  .rightButtonContainer {
+    width: 50%;
+  }
+
+  .bottomContainer {
+    padding: 0;
+  }
 }

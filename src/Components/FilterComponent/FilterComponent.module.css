@@ -31,3 +31,18 @@
   outline: none;
   border-color: #6366f1;
 }
+
+@media (max-width: 767px) {
+  .filter-container {
+    padding: 4px 8px;
+    flex-direction: column;
+  }
+
+  .filter-icon {
+    display: none;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+}

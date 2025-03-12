@@ -9,7 +9,6 @@ import AuthRoute from "../../../Components/AuthComponent/AuthComponent";
 import { FetchedData } from "../../../Interfaces/IFetchedDataDocuments";
 import { IClientRow } from "../../../Interfaces/IClientRow";
 import { DocumentStatus, IDocument } from "../../../Interfaces/IDocument";
-import { FetchedProviders } from "../../../Interfaces/IFetchedProviders";
 import {
   IProviderDocumentsResponse,
 } from "../../../Interfaces/IProviderInterfaces";
@@ -229,7 +228,6 @@ export const HomeAdmin = () => {
                 <SearchComponent onSearch={handleSearch} />
               </div>
             </div>
-
             <div className={styles["topContainer"]}>
               <div className={styles[""]}>
                 <PendingTable
