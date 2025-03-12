@@ -137,9 +137,11 @@ export const PendingTable: React.FC<PendingTableProps> = ({
                                 Estatus: {getStatusColor(document.status)}{" "}
                                 {document.status}
                               </div>
-                              <div>
-                                Razón de rechazo: {document.rejectionReason}
-                              </div>
+                              {document.status === "Rechazado" && (
+                                <div>
+                                  Razón de rechazo: {document.rejectionReason}
+                                </div>
+                              )}
                               <div style={{ marginTop: "5px" }}>
                                 <ButtonComponent
                                   text={`Ver ${document.fileType}`} // Corrected template literal
