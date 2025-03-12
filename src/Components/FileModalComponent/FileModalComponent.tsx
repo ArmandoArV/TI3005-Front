@@ -3,7 +3,7 @@ import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import styles from "./main.module.css";
 import { ReasonModalComponent } from "../ReasonModalComponent/ReasonModalComponent";
 import { API_URL } from "../../Constants";
-import { showSuccessAlert, showErrorAlert } from "../../Util/AlertUtil";
+import { showSuccessAlert, showErrorAlert, showConfirmAlert } from "../../Util/AlertUtil";
 interface IFileModalProps {
   documentTitle: string;
   fileUrl: string;
@@ -23,9 +23,43 @@ export const FileModal: React.FC<IFileModalProps> = ({
 }) => {
   const [showReasonModal, setShowReasonModal] = useState(false);
 
-  const handleApprove = () => {
-    console.log("Approve");
-  };
+  const handleApprove = useCallback(() => {
+    showConfirmAlert(
+      "Confirmar",
+      "¿Está seguro de que desea aprobar este documento?",
+      "Aprobar",
+      () => {
+        fetch(`${API_URL}/documents/validate`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${document.cookie.split("=")[1]}`,
+          },
+          body: JSON.stringify({
+            id: documentId,
+            ownerId: ownerId,
+            ownerType: ownerType,
+          }),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.success) {
+              console.log("Document approved successfully");
+              showSuccessAlert("Éxito", "Documento aprobado exitosamente", onClose);
+            } else {
+              console.error("Failed to approve document", result.message);
+              showErrorAlert("Error", "No se pudo aprobar el documento");
+            }
+          })
+          .catch((error) => {
+            console.error("An error occurred while approving the document", error);
+          });
+      },
+      () => {
+        console.log("Approval cancelled");
+      }
+    );
+  }, [documentId, ownerId, ownerType, onClose]);
 
   const handleReject = () => {
     setShowReasonModal(true);
