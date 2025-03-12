@@ -7,6 +7,9 @@ interface IFileModalProps {
     documentTitle: string;
     fileUrl: string;
     onClose: () => void;
+    id : string;
+    ownerId : string;
+    ownerType : string;
 }
 
 export const FileModal: React.FC<IFileModalProps> = ({ documentTitle, fileUrl, onClose }) => {

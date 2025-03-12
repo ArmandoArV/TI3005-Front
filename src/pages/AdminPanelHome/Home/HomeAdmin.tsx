@@ -44,12 +44,14 @@ const transformData = (fetchedData: FetchedData): IClientRow[] => {
       return timestamp > latest ? timestamp : latest;
     }, "");
 
+    console.log("client", client);
     return {
       clientName: client.name,
       managerName: vendor.name,
       status: client.documentsStatus,
       documents: transformedDocuments,
       fecha: latestTimestamp,
+      id: client.id,
     };
   });
 };

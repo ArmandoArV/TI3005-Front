@@ -6,5 +6,8 @@ export interface IClientRow {
   managerName: string;
   status: DocumentStatus;
   documents: IDocument[];
-  fecha: string; // Use the latest document's uploadTimestamp or requestedTimestamp
+  fecha: string;
+  id?: number;
+  ownerId?: string;
+  ownerType?: string;
 }

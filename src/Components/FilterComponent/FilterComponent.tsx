@@ -47,9 +47,11 @@ const FilterComponent: React.FC<FilterProps> = ({ onFilterChange, filterOptions 
                 <option value="">Filtrar por Fecha</option>
                 {filterOptions.fechas.map((fecha, index) => (
                     <option key={index} value={fecha}>
-                        {fecha}
+                        {new Date(fecha).toLocaleDateString("es-ES", { year: 'numeric', month: 'long', day: 'numeric' })}
                     </option>
                 ))}
+
+
             </select>
 
             <select

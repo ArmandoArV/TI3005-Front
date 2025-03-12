@@ -53,6 +53,8 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
         setModalData(null);
     };
 
+    console.log("data INFORMATION", data);
+
     return (
         <div className={styles["outer-container"]}>
             <table className={styles["pending-table"]}>
@@ -68,7 +70,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
                         <th>Encargado</th>
                         <th>Documentos</th>
                         <th>Fecha</th>
-                        <th>Acciones</th> {/* New column for the expand button */}
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +84,10 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
                                     <td>{row.clientName}</td>
                                     <td>{row.managerName}</td>
                                     <td>{`${row.documents.length}/3`}</td>
-                                    <td>{row.fecha}</td>
+                                    <td>
+                                        {new Date(row.fecha).toLocaleDateString("es-ES", { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    </td>
+
                                     <td>
                                         <button
                                             onClick={() => toggleRow(index)}
@@ -139,6 +144,9 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle, cl
                     documentTitle={modalData.documentTitle}
                     fileUrl={modalData.fileUrl}
                     onClose={closeModal}
+                    id=""
+                    ownerId=""
+                    ownerType=""
                 />
             )}
         </div>
