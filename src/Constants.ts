@@ -1,6 +1,7 @@
 import { IRegex } from "./Interfaces/IRegex";
 import homeIcon from "./resources/homeIcon.png";
 import rejected from "./resources/rejectedIcon.png";
+import approved from "./resources/approvedDocuments.png";
 export const API_URL = "https://tfy0x0grw8.execute-api.us-east-1.amazonaws.com";
 
 export const regex: IRegex = {
@@ -23,4 +24,9 @@ export const lateralNavbarElements = [
     link: "/rejectedDocuments",
     image: rejected,
   },
+  {
+    label: "Documentos Aprobados",
+    link: "/approvedDocuments",
+    image: approved,
+  }
 ];
