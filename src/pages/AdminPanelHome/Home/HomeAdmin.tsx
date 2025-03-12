@@ -76,8 +76,8 @@ const transformDataProviders = (
 
     // Return the transformed row with the correct fields
     return {
-      clientName: provider.name, // Direct access to the `provider` data
-      managerName: vendor.name, // Direct access to the `vendor` data
+      clientName: provider.name,
+      managerName: vendor.name,
       status: provider.documentsStatus as DocumentStatus,
       documents: transformedDocuments,
       fecha: latestTimestamp,
@@ -203,12 +203,18 @@ export const HomeAdmin = () => {
     <AuthRoute>
       <div className={styles["fullContainer"]}>
         <HeaderComponent />
+
         <div className={styles["contentContainer"]}>
           <div className={styles["lateralNavbarContainer"]}>
             <LateralNavbarComponent options={lateralNavbarElements} />
           </div>
+
           <div className={styles["mainContent"]}>
-            <h2>Dashboard</h2>
+            <div className={styles["welcomeContainer"]}>
+              <h2
+                className={styles["welcomeText"]}
+              >Bienvenido</h2>
+            </div>
             <div className={styles["filterContainer"]}>
               <div className={styles["leftFilterContainer"]}>
                 <FilterComponent

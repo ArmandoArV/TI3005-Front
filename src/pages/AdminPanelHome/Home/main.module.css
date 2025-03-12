@@ -55,3 +55,15 @@
   width: fit-content;
   gap: 10px;
 }
+
+.welcomeContainer {
+  width: 100%; 
+  text-align: left; 
+  margin-bottom: 1rem;
+}
+
+.welcomeText {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
+}
