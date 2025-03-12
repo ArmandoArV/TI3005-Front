@@ -5,17 +5,13 @@ import FileUploadComponent from "../../../Components/FileUploadComponent/FileUpl
 import ButtonComponent from "../../../Components/ButtonComponent/ButtonComponent";
 import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
 import { API_URL } from "../../../Constants";
-
+import { showSuccessAlert, showErrorAlert } from "../../../Util/AlertUtil";
+import { DocumentMetadata } from "../../../Interfaces/IDocumentMetadata";
 export const DocumentosProveedor = () => {
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); // Prevent the default form submission behavior
-        console.log("Form submitted!");
-        console.log("Name:", name);
-        console.log("Email:", email);
-    }
+    const [ownerType, setOwnerType] = useState<string>("");
+    const [ownerId, setOwnerId] = useState<string>("");
 
     const retrieveUserInformation = useCallback(async () => {
         const requestBody = {
@@ -32,6 +28,8 @@ export const DocumentosProveedor = () => {
             const data = await response.json();
             setName(data.ownerData.name);
             setEmail(data.ownerData.email);
+            setOwnerType(data.ownerType);
+            setOwnerId(data.ownerId);
         } catch (error) {
             console.error("Error fetching user information:", error);
         }
@@ -40,6 +38,57 @@ export const DocumentosProveedor = () => {
     useEffect(() => {
         retrieveUserInformation();
     }, [retrieveUserInformation]);
+
+
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData();
+
+        formData.append("ownerId", ownerId);
+        formData.append("ownerType", ownerType);
+
+        const fileInputs = document.querySelectorAll("input[type=file]");
+        console.log("File inputs:", fileInputs);
+        const metadata: DocumentMetadata[] = [];
+
+
+        fileInputs.forEach((fileInput) => {
+            const inputElement = fileInput as HTMLInputElement;
+            if (inputElement.files && inputElement.files.length > 0) {
+                const file = inputElement.files[0];
+                formData.append("files", file);
+                const documentType = inputElement.id;
+
+                metadata.push({
+                    documentType,
+                    filename: file.name,
+                });
+            }
+        });
+
+        formData.append("metadata", JSON.stringify(metadata));
+
+        try {
+            const token = new URLSearchParams(window.location.search).get("token");
+            const response = await fetch(`${API_URL}/documents/upload-multiple`, {
+                method: "POST",
+                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            showSuccessAlert("Success", "Documentos enviados correctamente");
+        } catch (error) {
+            console.error("Error sending documents:", error);
+            showErrorAlert("Error", (error as any).message || "An unknown error occurred");
+        }
+    }, [ownerId, ownerType]);
+
 
     return (
 
@@ -65,6 +114,7 @@ export const DocumentosProveedor = () => {
                                     id="email-input"
                                     className={styles.customInputBorder}
                                     labelClassName={styles.customLabel}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -73,18 +123,21 @@ export const DocumentosProveedor = () => {
                                 <FileUploadComponent
                                     label="Opinión de cumplimiento"
                                     onFileSelect={(file) => console.log(file)}
+                                    id="OpinionDeCumplimiento"
                                 />
                             </div>
                             <div className={styles.mediumMediumContainer}>
                                 <FileUploadComponent
                                     label="Constancia de situación fiscal"
                                     onFileSelect={(file) => console.log(file)}
+                                    id="ConstanciaDeSituacionFiscal"
                                 />
                             </div>
                             <div className={styles.rightMediumContainer}>
                                 <FileUploadComponent
                                     label="Contrato"
                                     onFileSelect={(file) => console.log(file)}
+                                    id="Contrato"
                                 />
                             </div>
                         </div>

@@ -9,7 +9,7 @@ import AuthRoute from "../../../Components/AuthComponent/AuthComponent";
 import { FetchedData } from "../../../Interfaces/IFetchedDataDocuments";
 import { IClientRow } from "../../../Interfaces/IClientRow";
 import { IDocument } from "../../../Interfaces/IDocument";
-
+import { FetchedProviders } from "../../../Interfaces/IFetchedProviders";
 
 const extractFileId = (fileUrl: string): string | null => {
     const regex = /\/d\/([^\/]+)\/view/;
@@ -50,6 +50,37 @@ const transformData = (fetchedData: FetchedData): IClientRow[] => {
     });
 };
 
+
+const transformDataProviders = (fetchedProvidersResponse: FetchedProviders): IClientRow[] => {
+    return fetchedProvidersResponse.providers.map((providerData) => {
+        const { provider, vendor, documents } = providerData;  // `provider` is already here
+
+        // Map documents to the IDocument structure
+        const transformedDocuments: IDocument[] = documents.map((doc) => ({
+            title: doc.documentType,
+            status: doc.validStatus,
+            fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
+            fileType: doc.fileType,
+        }));
+
+        // Determine the latest timestamp for the "fecha" field
+        const latestTimestamp = documents.reduce((latest, doc) => {
+            const timestamp = doc.uploadTimestamp || doc.requestedTimestamp;
+            return timestamp > latest ? timestamp : latest;
+        }, "");
+
+        // Return the transformed row with the correct fields
+        return {
+            clientName: provider.name,   // Direct access to the `provider` data
+            managerName: vendor.name,    // Direct access to the `vendor` data
+            status: provider.documentsStatus,
+            documents: transformedDocuments,
+            fecha: latestTimestamp,
+        };
+    });
+};
+
+
 export const HomeAdmin = () => {
     const [dataCliente, setDataCliente] = useState<IClientRow[]>([]);
     const [loading, setLoading] = useState(true);
@@ -65,9 +96,7 @@ export const HomeAdmin = () => {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${document.cookie.split('=')[1]}`,
                 },
-            }
-
-            );
+            });
             const fetchedData: FetchedData = await response.json();
 
             if (fetchedData.success) {
@@ -84,7 +113,6 @@ export const HomeAdmin = () => {
         }
     }, []);
 
-
     const fetchProviderData = useCallback(async () => {
         try {
             const response = await fetch(`${API_URL}/dashboard/providersPending`, {
@@ -98,6 +126,7 @@ export const HomeAdmin = () => {
 
             if (fetchedData.success) {
                 const transformedData = transformData(fetchedData);
+                console.log(transformedData);
                 setDataProveedor(transformedData);
             } else {
                 setError(fetchedData.message || "Failed to fetch data");
@@ -110,7 +139,6 @@ export const HomeAdmin = () => {
         }
     }, []);
 
-
     useEffect(() => {
         fetchClientData();
         fetchProviderData();
@@ -119,8 +147,6 @@ export const HomeAdmin = () => {
     if (loading) {
         return <div>Loading...</div>;
     }
-
-
 
     return (
         <AuthRoute>

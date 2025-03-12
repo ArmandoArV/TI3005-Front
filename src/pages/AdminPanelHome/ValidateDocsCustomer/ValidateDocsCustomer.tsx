@@ -51,7 +51,6 @@ export const DocumentosCliente = () => {
         formData.append("ownerId", ownerId);
         formData.append("ownerType", ownerType);
 
-        // File inputs should come from FileUploadComponents
         const fileInputs = document.querySelectorAll("input[type=file]");
         console.log("File inputs:", fileInputs);
         const metadata: DocumentMetadata[] = [];
@@ -62,19 +61,14 @@ export const DocumentosCliente = () => {
             if (inputElement.files && inputElement.files.length > 0) {
                 const file = inputElement.files[0];
                 formData.append("files", file);
-                // Retrieve the id from the FileUploadComponent
                 const documentType = inputElement.id;
 
-                // Make sure the documentType matches the expected enum value exactly
                 metadata.push({
                     documentType,
                     filename: file.name,
                 });
             }
         });
-
-        // Log metadata to confirm it
-        console.log("Metadata before sending:", metadata);
 
         formData.append("metadata", JSON.stringify(metadata));
 
