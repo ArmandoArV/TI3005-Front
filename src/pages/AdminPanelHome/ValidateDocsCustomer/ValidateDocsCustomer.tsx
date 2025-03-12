@@ -99,7 +99,7 @@ export const DocumentosCliente = () => {
 
                 const data = await response.json();
                 console.log(data);
-                showSuccessAlert("Success", "Documentos enviados correctamente", redirectToHilados);
+                showSuccessAlert("¡Éxito!", "Documentos enviados correctamente", redirectToHilados);
             } catch (error) {
                 console.error("Error sending documents:", error);
                 showErrorAlert(

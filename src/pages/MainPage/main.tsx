@@ -55,7 +55,7 @@ export const MainPage = () => {
             }
 
             const data = await response.json();
-            showSuccessAlert("Success", "Login successful");
+            showSuccessAlert("¡Éxito!", "¡Inicio de sesión exitoso!");
             console.log(data);
             document.cookie = `token=${data.token}; path=/`;
             window.location.href = "/homeAdmin";
