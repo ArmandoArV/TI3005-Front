@@ -103,7 +103,7 @@ export const ApprovedDocuments = () => {
             <LateralNavbarComponent options={lateralNavbarElements} />
           </div>
           <div className={styles["mainContent"]}>
-            <h2>Dashboard</h2>
+            <h2>Documentos Aprobados</h2>
             <div className={styles["topContainer"]}>
               <div className={styles[""]}>
                 <PendingTable
