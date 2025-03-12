@@ -7,151 +7,164 @@ import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderCompo
 import { API_URL } from "../../../Constants";
 import { showSuccessAlert, showErrorAlert } from "../../../Util/AlertUtil";
 import { DocumentMetadata } from "../../../Interfaces/IDocumentMetadata";
+import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingComponent";
 export const DocumentosProveedor = () => {
-    const [name, setName] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [ownerType, setOwnerType] = useState<string>("");
-    const [ownerId, setOwnerId] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [ownerType, setOwnerType] = useState<string>("");
+  const [ownerId, setOwnerId] = useState<string>("");
 
-    const retrieveUserInformation = useCallback(async () => {
-        const requestBody = {
-            token: new URLSearchParams(window.location.search).get("token"),
-        };
-        try {
-            const response = await fetch(`${API_URL}/validateToken`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestBody),
-            });
-            const data = await response.json();
-            setName(data.ownerData.name);
-            setEmail(data.ownerData.email);
-            setOwnerType(data.ownerType);
-            setOwnerId(data.ownerId);
-        } catch (error) {
-            console.error("Error fetching user information:", error);
+  const [loading, setLoading] = useState(false);
+
+  const retrieveUserInformation = useCallback(async () => {
+    const requestBody = {
+      token: new URLSearchParams(window.location.search).get("token"),
+    };
+    try {
+      const response = await fetch(`${API_URL}/validateToken`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const data = await response.json();
+      setName(data.ownerData.name);
+      setEmail(data.ownerData.email);
+      setOwnerType(data.ownerType);
+      setOwnerId(data.ownerId);
+    } catch (error) {
+      console.error("Error fetching user information:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    retrieveUserInformation();
+  }, [retrieveUserInformation]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = new FormData();
+
+      formData.append("ownerId", ownerId);
+      formData.append("ownerType", ownerType);
+
+      const fileInputs = document.querySelectorAll("input[type=file]");
+      console.log("File inputs:", fileInputs);
+      const metadata: DocumentMetadata[] = [];
+
+      fileInputs.forEach((fileInput) => {
+        const inputElement = fileInput as HTMLInputElement;
+        if (inputElement.files && inputElement.files.length > 0) {
+          const file = inputElement.files[0];
+          formData.append("files", file);
+          const documentType = inputElement.id;
+
+          metadata.push({
+            documentType,
+            filename: file.name,
+          });
         }
-    }, []);
+      });
 
-    useEffect(() => {
-        retrieveUserInformation();
-    }, [retrieveUserInformation]);
+      formData.append("metadata", JSON.stringify(metadata));
 
-
-    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData();
-
-        formData.append("ownerId", ownerId);
-        formData.append("ownerType", ownerType);
-
-        const fileInputs = document.querySelectorAll("input[type=file]");
-        console.log("File inputs:", fileInputs);
-        const metadata: DocumentMetadata[] = [];
-
-
-        fileInputs.forEach((fileInput) => {
-            const inputElement = fileInput as HTMLInputElement;
-            if (inputElement.files && inputElement.files.length > 0) {
-                const file = inputElement.files[0];
-                formData.append("files", file);
-                const documentType = inputElement.id;
-
-                metadata.push({
-                    documentType,
-                    filename: file.name,
-                });
-            }
+      try {
+        setLoading(true);
+        const token = new URLSearchParams(window.location.search).get("token");
+        const response = await fetch(`${API_URL}/documents/upload-multiple`, {
+          method: "POST",
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          body: formData,
         });
 
-        formData.append("metadata", JSON.stringify(metadata));
-
-        try {
-            const token = new URLSearchParams(window.location.search).get("token");
-            const response = await fetch(`${API_URL}/documents/upload-multiple`, {
-                method: "POST",
-                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log(data);
-            showSuccessAlert("Success", "Documentos enviados correctamente");
-        } catch (error) {
-            console.error("Error sending documents:", error);
-            showErrorAlert("Error", (error as any).message || "An unknown error occurred");
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-    }, [ownerId, ownerType]);
 
+        const data = await response.json();
+        console.log(data);
+        showSuccessAlert("Success", "Documentos enviados correctamente");
+      } catch (error) {
+        console.error("Error sending documents:", error);
+        showErrorAlert(
+          "Error",
+          (error as any).message || "An unknown error occurred"
+        );
+      }
+      setLoading(false);
+    },
+    [ownerId, ownerType]
+  );
 
-    return (
+  if (loading) {
+    return <LoadingComponent />;
+  }
 
-        <main className={styles.background}>
-            <HeaderComponent />
-            <div className={styles.main}>
-                <div className={styles.formContainerExternal}>
-                    <div className={styles.welcomeContainer}>
-                        <h1>¡Hola, {name}!</h1>
-                    </div>
-                    <form className={styles.formContainer} onSubmit={handleSubmit}>
-                        <div className={styles.topContainer}>
-                            <div className={styles.topTopContainer}>
-                                <h2 className={styles.header}>Solicitud de Documentos</h2>
-                            </div>
-                            <div className={styles.topBottomContainer}>
-                                <InputComponent
-                                    label="Correo electrónico"
-                                    type="text"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Correo electrónico"
-                                    id="email-input"
-                                    className={styles.customInputBorder}
-                                    labelClassName={styles.customLabel}
-                                    disabled
-                                />
-                            </div>
-                        </div>
-                        <div className={styles.mediumContainer}>
-                            <div className={styles.leftMediumContainer}>
-                                <FileUploadComponent
-                                    label="Opinión de cumplimiento"
-                                    onFileSelect={(file) => console.log(file)}
-                                    id="OpinionDeCumplimiento"
-                                />
-                            </div>
-                            <div className={styles.mediumMediumContainer}>
-                                <FileUploadComponent
-                                    label="Constancia de situación fiscal"
-                                    onFileSelect={(file) => console.log(file)}
-                                    id="ConstanciaDeSituacionFiscal"
-                                />
-                            </div>
-                            <div className={styles.rightMediumContainer}>
-                                <FileUploadComponent
-                                    label="Contrato"
-                                    onFileSelect={(file) => console.log(file)}
-                                    id="Contrato"
-                                />
-                            </div>
-                        </div>
-                        <div className={styles.bottomContainer}>
-                            <div className={styles.buttonWrapper}>
-                                <ButtonComponent type="submit" text="Enviar" onClick={() => { }} className={styles.customButton} />
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
+  return (
+    <main className={styles.background}>
+      <HeaderComponent />
+      <div className={styles.main}>
+        <div className={styles.formContainerExternal}>
+          <div className={styles.welcomeContainer}>
+            <h1>¡Hola, {name}!</h1>
+          </div>
+          <form className={styles.formContainer} onSubmit={handleSubmit}>
+            <div className={styles.topContainer}>
+              <div className={styles.topTopContainer}>
+                <h2 className={styles.header}>Solicitud de Documentos</h2>
+              </div>
+              <div className={styles.topBottomContainer}>
+                <InputComponent
+                  label="Correo electrónico"
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Correo electrónico"
+                  id="email-input"
+                  className={styles.customInputBorder}
+                  labelClassName={styles.customLabel}
+                  disabled
+                />
+              </div>
             </div>
-        </main>
-    );
+            <div className={styles.mediumContainer}>
+              <div className={styles.leftMediumContainer}>
+                <FileUploadComponent
+                  label="Opinión de cumplimiento"
+                  onFileSelect={(file) => console.log(file)}
+                  id="OpinionDeCumplimiento"
+                />
+              </div>
+              <div className={styles.mediumMediumContainer}>
+                <FileUploadComponent
+                  label="Constancia de situación fiscal"
+                  onFileSelect={(file) => console.log(file)}
+                  id="ConstanciaDeSituacionFiscal"
+                />
+              </div>
+              <div className={styles.rightMediumContainer}>
+                <FileUploadComponent
+                  label="Contrato"
+                  onFileSelect={(file) => console.log(file)}
+                  id="Contrato"
+                />
+              </div>
+            </div>
+            <div className={styles.bottomContainer}>
+              <div className={styles.buttonWrapper}>
+                <ButtonComponent
+                  type="submit"
+                  text="Enviar"
+                  onClick={() => {}}
+                  className={styles.customButton}
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
 };
-
