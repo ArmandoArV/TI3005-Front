@@ -20,11 +20,11 @@ const getStatusColor = (status: DocumentStatus) => {
     switch (status) {
         case "Por validar":
             return "🟠";
-        case "Incompleto":
+        case "Rechazado":
             return "🔴";
         case "Sin entrega":
             return "⚫";
-        case "Completo":
+        case "Aceptado":
             return "✅";
         default:
             return "❓";
@@ -52,10 +52,6 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
         setModalData(null);
     };
 
-    if (!data.length) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className={styles["outer-container"]}>
             <table className={styles["pending-table"]}>
@@ -75,58 +71,68 @@ export const PendingTable: React.FC<PendingTableProps> = ({ data, tableTitle }) 
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedData.map((row: IClientRow, index: number) => (
-                        <React.Fragment key={index}>
-                            <tr className={styles["table-row"]}>
-                                <td>
-                                    {getStatusColor(row.status)} {row.status}
-                                </td>
-                                <td>{row.clientName}</td>
-                                <td>{row.managerName}</td>
-                                <td>{`${row.documents.length}/3`}</td>
-                                <td>{row.fecha}</td>
-                                <td>
-                                    <button
-                                        onClick={() => toggleRow(index)}
-                                        aria-label={expandedRow === index ? "Collapse row" : "Expand row"}
-                                        className={styles["expand-button"]}
-                                    >
-                                        <img
-                                            src={expandedRow === index ? collapseIcon : expandIcon} // Switch images based on state
-                                            alt={expandedRow === index ? "Collapse" : "Expand"}
-                                            className={styles["expand-icon"]}
-                                        />
-                                    </button>
-                                </td>
-                            </tr>
-                            {expandedRow === index && (
-                                <tr>
-                                    <td colSpan={6} className={styles["expanded-row"]}>
-                                        <div className={styles["expanded-row-content"]}>
-                                            {row.documents.map((document: IDocument, docIndex: number) => (
-                                                <div key={docIndex} className={styles["document-row"]}>
-                                                    <div>{document.title}</div>
-                                                    <div>
-                                                        Estatus: {getStatusColor(document.status)} {document.status}
-                                                    </div>
-                                                    <div style={{ marginTop: "5px" }}>
-                                                        <ButtonComponent
-                                                            text={`Ver ${document.fileType}`} // Corrected template literal
-                                                            onClick={() => openModal(document.title, document.fileUrl || "")}
-                                                            className={styles.customButton}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                    {paginatedData.length > 0 ? (
+                        paginatedData.map((row: IClientRow, index: number) => (
+                            <React.Fragment key={index}>
+                                <tr className={styles["table-row"]}>
+                                    <td>
+                                        {getStatusColor(row.status)} {row.status}
+                                    </td>
+                                    <td>{row.clientName}</td>
+                                    <td>{row.managerName}</td>
+                                    <td>{`${row.documents.length}/3`}</td>
+                                    <td>{row.fecha}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => toggleRow(index)}
+                                            aria-label={expandedRow === index ? "Collapse row" : "Expand row"}
+                                            className={styles["expand-button"]}
+                                        >
+                                            <img
+                                                src={expandedRow === index ? collapseIcon : expandIcon} // Switch images based on state
+                                                alt={expandedRow === index ? "Collapse" : "Expand"}
+                                                className={styles["expand-icon"]}
+                                            />
+                                        </button>
                                     </td>
                                 </tr>
-                            )}
-                        </React.Fragment>
-                    ))}
+                                {expandedRow === index && (
+                                    <tr>
+                                        <td colSpan={6} className={styles["expanded-row"]}>
+                                            <div className={styles["expanded-row-content"]}>
+                                                {row.documents.map((document: IDocument, docIndex: number) => (
+                                                    <div key={docIndex} className={styles["document-row"]}>
+                                                        <div>{document.title}</div>
+                                                        <div>
+                                                            Estatus: {getStatusColor(document.status)} {document.status}
+                                                        </div>
+                                                        <div style={{ marginTop: "5px" }}>
+                                                            <ButtonComponent
+                                                                text={`Ver ${document.fileType}`} // Corrected template literal
+                                                                onClick={() => openModal(document.title, document.fileUrl || "")}
+                                                                className={styles.customButton}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={6} style={{ textAlign: "center" }}>
+                                No hay documentos.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            {paginatedData.length > 0 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            )}
             {modalData && (
                 <FileModal
                     documentTitle={modalData.documentTitle}

@@ -82,10 +82,6 @@
   background-color: #e0e7ff;
 }
 
-.lateralNavbar__bottom__option.active {
-  color: #1d4ed8;
-  font-weight: 600;
-}
 
 .lateralNavbar__bottom {
   padding-top: 16px;

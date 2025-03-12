@@ -4,6 +4,7 @@ import { MainPage } from './pages/MainPage/main';
 import { DocumentosProveedor } from './pages/AdminPanelHome/ValidateDocsProvider/ValidateDocs';
 import { DocumentosCliente } from './pages/AdminPanelHome/ValidateDocsCustomer/ValidateDocsCustomer';
 import { HomeAdmin } from './pages/AdminPanelHome/Home/HomeAdmin';
+import { RejectedDocuments } from './pages/AdminPanelHome/RejectedDocuments/RejectedDocuments';
 import './App.css';
 
 function App() {
@@ -26,6 +27,11 @@ function App() {
           <Route
             path='/homeAdmin'
             element={<HomeAdmin />}
+          />
+
+          <Route
+            path='/rejectedDocuments'
+            element={<RejectedDocuments />}
           />
 
         </Routes>

@@ -50,7 +50,7 @@ const transformData = (fetchedData: FetchedData): IClientRow[] => {
     });
 };
 
-export const HomeAdmin = () => {
+export const RejectedDocuments = () => {
     const [dataCliente, setDataCliente] = useState<IClientRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -59,7 +59,7 @@ export const HomeAdmin = () => {
     // Memoize the fetchData function using useCallback
     const fetchClientData = useCallback(async () => {
         try {
-            const response = await fetch(`${API_URL}/dashboard/clientsPending`, {
+            const response = await fetch(`${API_URL}/dashboard/clientsRejected`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export const HomeAdmin = () => {
 
     const fetchProviderData = useCallback(async () => {
         try {
-            const response = await fetch(`${API_URL}/dashboard/providersPending`, {
+            const response = await fetch(`${API_URL}/dashboard/clientsRejected`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,10 +134,10 @@ export const HomeAdmin = () => {
                         <h2>Dashboard</h2>
                         <div className={styles["topContainer"]}>
                             <div className={styles[""]}>
-                                <PendingTable data={dataCliente} tableTitle="Documentos Pendientes del Cliente" />
+                                <PendingTable data={dataCliente} tableTitle="Documentos Rechazados del Cliente" />
                             </div>
                             <div className={styles[""]}>
-                                <PendingTable data={dataProveedor} tableTitle="Documentos Pendientes del Proveedor" />
+                                <PendingTable data={dataProveedor} tableTitle="Documentos Rechazados del Proveedor" />
                             </div>
                         </div>
                         <div className={styles["bottomContainer"]}></div>

@@ -20,7 +20,7 @@ export const lateralNavbarElements = [
   },
   {
     label: "Documentos Rechazados",
-    link: "/admin/rejectedDocuments",
+    link: "/rejectedDocuments",
     image: rejected,
   },
 ];

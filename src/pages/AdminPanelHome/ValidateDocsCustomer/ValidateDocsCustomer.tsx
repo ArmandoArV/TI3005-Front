@@ -1,23 +1,108 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./ValidateDocs.module.css";
 import InputComponent from "../../../Components/InputComponent/InputComponent";
 import FileUploadComponent from "../../../Components/FileUploadComponent/FileUploadComponent";
 import ButtonComponent from "../../../Components/ButtonComponent/ButtonComponent";
 import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
+import { DocumentMetadata } from "../../../Interfaces/IDocumentMetadata";
+import { API_URL } from "../../../Constants";
+import { showErrorAlert, showSuccessAlert } from "../../../Util/AlertUtil";
 
 export const DocumentosCliente = () => {
-    const [name, setName] = useState<string>("Test");
+    const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
+    const [ownerType, setOwnerType] = useState<string>("");
+    const [ownerId, setOwnerId] = useState<string>("");
+    const [complianceOpinionFile, setComplianceOpinionFile] = useState<File | null>(null);
+    const [fiscalSituationFile, setFiscalSituationFile] = useState<File | null>(null);
+    const [purchaseOrderFile, setPurchaseOrderFile] = useState<File | null>(null);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); // Prevent the default form submission behavior
-        console.log("Form submitted!");
-        console.log("Name:", name);
-        console.log("Email:", email);
-    }
+    const retrieveUserInformation = useCallback(async () => {
+        const requestBody = {
+            token: new URLSearchParams(window.location.search).get("token"),
+        };
+        try {
+            const response = await fetch(`${API_URL}/validateToken`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+            const data = await response.json();
+            setOwnerType(data.ownerType);
+            setOwnerId(data.ownerId);
+            setName(data.ownerData.name);
+            setEmail(data.ownerData.email);
+        } catch (error) {
+            console.error("Error fetching user information:", error);
+        }
+    }, []);
+
+    useEffect(() => {
+        retrieveUserInformation();
+    }, [retrieveUserInformation]);
+
+
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData();
+
+        formData.append("ownerId", ownerId);
+        formData.append("ownerType", ownerType);
+
+        // File inputs should come from FileUploadComponents
+        const fileInputs = document.querySelectorAll("input[type=file]");
+        console.log("File inputs:", fileInputs);
+        const metadata: DocumentMetadata[] = [];
+
+
+        fileInputs.forEach((fileInput) => {
+            const inputElement = fileInput as HTMLInputElement;
+            if (inputElement.files && inputElement.files.length > 0) {
+                const file = inputElement.files[0];
+                formData.append("files", file);
+                // Retrieve the id from the FileUploadComponent
+                const documentType = inputElement.id;
+
+                // Make sure the documentType matches the expected enum value exactly
+                metadata.push({
+                    documentType,
+                    filename: file.name,
+                });
+            }
+        });
+
+        // Log metadata to confirm it
+        console.log("Metadata before sending:", metadata);
+
+        formData.append("metadata", JSON.stringify(metadata));
+
+        try {
+            const token = new URLSearchParams(window.location.search).get("token");
+            const response = await fetch(`${API_URL}/documents/upload-multiple`, {
+                method: "POST",
+                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            showSuccessAlert("Success", "Documentos enviados correctamente");
+        } catch (error) {
+            console.error("Error sending documents:", error);
+            showErrorAlert("Error", (error as any).message || "An unknown error occurred");
+        }
+    }, [ownerId, ownerType]);
+
+
+
 
     return (
-
         <main className={styles.background}>
             <HeaderComponent />
             <div className={styles.main}>
@@ -32,14 +117,15 @@ export const DocumentosCliente = () => {
                             </div>
                             <div className={styles.topBottomContainer}>
                                 <InputComponent
-                                    label="Correo electrónico"
+                                    label="Correo de contacto"
                                     type="text"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Correo electrónico"
+                                    placeholder="Correo de contacto"
                                     id="email-input"
                                     className={styles.customInputBorder}
                                     labelClassName={styles.customLabel}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -47,33 +133,33 @@ export const DocumentosCliente = () => {
                             <div className={styles.leftMediumContainer}>
                                 <FileUploadComponent
                                     label="Opinión de cumplimiento"
-                                    onFileSelect={(file) => console.log(file)}
+                                    onFileSelect={(file) => setComplianceOpinionFile(file)}
+                                    id="OpinionDeCumplimiento"
                                 />
                             </div>
                             <div className={styles.mediumMediumContainer}>
                                 <FileUploadComponent
                                     label="Constancia de situación fiscal"
-                                    onFileSelect={(file) => console.log(file)}
+                                    onFileSelect={(file) => setFiscalSituationFile(file)}
+                                    id="ConstanciaDeSituacionFiscal"
                                 />
                             </div>
                             <div className={styles.rightMediumContainer}>
                                 <FileUploadComponent
                                     label="Orden de compra"
-                                    onFileSelect={(file) => console.log(file)}
+                                    onFileSelect={(file) => setPurchaseOrderFile(file)}
+                                    id="OrdenDeCompra"
                                 />
                             </div>
                         </div>
                         <div className={styles.bottomContainer}>
                             <div className={styles.buttonWrapper}>
                                 <ButtonComponent type="submit" text="Enviar" onClick={() => { }} className={styles.customButton} />
-
                             </div>
                         </div>
                     </form>
                 </div>
-
             </div>
         </main>
     );
 };
-

@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./ValidateDocs.module.css";
 import InputComponent from "../../../Components/InputComponent/InputComponent";
 import FileUploadComponent from "../../../Components/FileUploadComponent/FileUploadComponent";
 import ButtonComponent from "../../../Components/ButtonComponent/ButtonComponent";
 import { HeaderComponent } from "../../../Components/HeaderComponent/HeaderComponent";
+import { API_URL } from "../../../Constants";
 
 export const DocumentosProveedor = () => {
-    const [name, setName] = useState<string>("Test");
+    const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -15,6 +16,30 @@ export const DocumentosProveedor = () => {
         console.log("Name:", name);
         console.log("Email:", email);
     }
+
+    const retrieveUserInformation = useCallback(async () => {
+        const requestBody = {
+            token: new URLSearchParams(window.location.search).get("token"),
+        };
+        try {
+            const response = await fetch(`${API_URL}/validateToken`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+            const data = await response.json();
+            setName(data.ownerData.name);
+            setEmail(data.ownerData.email);
+        } catch (error) {
+            console.error("Error fetching user information:", error);
+        }
+    }, []);
+
+    useEffect(() => {
+        retrieveUserInformation();
+    }, [retrieveUserInformation]);
 
     return (
 

@@ -1,7 +1,7 @@
 export type DocumentStatus =
   | "Por validar"
-  | "Completo"
-  | "Incompleto"
+  | "Aceptado"
+  | "Rechazado"
   | "Sin entrega";
 
 export interface IDocument {
