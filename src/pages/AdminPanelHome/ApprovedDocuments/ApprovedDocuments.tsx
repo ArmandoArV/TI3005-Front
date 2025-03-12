@@ -14,18 +14,8 @@ import { IClientDocumentsResponse } from "../../../Interfaces/IClientInterfaces"
 import { IProviderDocumentsResponse } from "../../../Interfaces/IProviderInterfaces";
 import { transformData, transformDataProviders } from "../Home/HomeAdmin";
 
-const extractFileId = (fileUrl: string): string | null => {
-  const regex = /\/d\/([^\/]+)\/view/;
-  const match = fileUrl.match(regex);
-  return match ? match[1] : null;
-};
 
-const transformFileUrl = (fileUrl: string): string | null => {
-  const fileId = extractFileId(fileUrl);
-  return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : null;
-};
-
-export const RejectedDocuments = () => {
+export const ApprovedDocuments = () => {
   const [dataCliente, setDataCliente] = useState<IClientRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +24,7 @@ export const RejectedDocuments = () => {
   // Memoize the fetchData function using useCallback
   const fetchClientData = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/dashboard/clientsRejected`, {
+      const response = await fetch(`${API_URL}/dashboard/clientsValid`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -46,6 +36,7 @@ export const RejectedDocuments = () => {
       if (fetchedData.success) {
         const transformedData = transformData(fetchedData);
         setDataCliente(transformedData);
+        console.log("Transformed data:", transformedData);
       } else {
         setError(fetchedData.message || "Failed to fetch data");
       }
@@ -59,7 +50,7 @@ export const RejectedDocuments = () => {
 
   const fetchProviderData = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/dashboard/clientsRejected`, {
+      const response = await fetch(`${API_URL}/dashboard/providersValid`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +108,7 @@ export const RejectedDocuments = () => {
               <div className={styles[""]}>
                 <PendingTable
                   data={dataCliente}
-                  tableTitle="Documentos Rechazados del Cliente"
+                  tableTitle="Documentos Aprobados del Cliente"
                   clientType="Cliente"
                   onRefresh={refreshData}
                 />
@@ -125,7 +116,7 @@ export const RejectedDocuments = () => {
               <div className={styles[""]}>
                 <PendingTable
                   data={dataProveedor}
-                  tableTitle="Documentos Rechazados del Proveedor"
+                  tableTitle="Documentos Aprobados del Proveedor"
                   clientType="Proveedor"
                   onRefresh={refreshData}
                 />

@@ -5,6 +5,7 @@ import { DocumentosProveedor } from './pages/AdminPanelHome/ValidateDocsProvider
 import { DocumentosCliente } from './pages/AdminPanelHome/ValidateDocsCustomer/ValidateDocsCustomer';
 import { HomeAdmin } from './pages/AdminPanelHome/Home/HomeAdmin';
 import { RejectedDocuments } from './pages/AdminPanelHome/RejectedDocuments/RejectedDocuments';
+import { ApprovedDocuments } from './pages/AdminPanelHome/ApprovedDocuments/ApprovedDocuments';
 import './App.css';
 
 function App() {
@@ -33,7 +34,10 @@ function App() {
             path='/rejectedDocuments'
             element={<RejectedDocuments />}
           />
-
+          <Route
+            path='/approvedDocuments'
+            element={<ApprovedDocuments />}
+          />
         </Routes>
       </Router>
     </div>

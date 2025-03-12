@@ -13,6 +13,7 @@ interface PendingTableProps {
   data: IClientRow[];
   tableTitle: string;
   clientType?: string;
+  onRefresh: () => void;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -36,6 +37,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({
   data,
   tableTitle,
   clientType,
+  onRefresh,
 }) => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,7 +146,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({
                               )}
                               <div style={{ marginTop: "5px" }}>
                                 <ButtonComponent
-                                  text={`Ver ${document.fileType}`} // Corrected template literal
+                                  text={`Ver PDF`} // ${document.fileType}
                                   onClick={() =>
                                     openModal(
                                       document.title,
@@ -186,10 +188,11 @@ export const PendingTable: React.FC<PendingTableProps> = ({
         <FileModal
           documentTitle={modalData.documentTitle}
           fileUrl={modalData.fileUrl}
-          onClose={closeModal}
+          onClose={() => setModalData(null)}
           documentId={modalData.documentId}
           ownerId={modalData.ownerId}
           ownerType={modalData.ownerType}
+          onRefresh={onRefresh} // Pass the callback to FileModal
         />
       )}
     </div>

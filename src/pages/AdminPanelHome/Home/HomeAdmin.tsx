@@ -47,7 +47,6 @@ export const transformData = (
       return timestamp > latest ? timestamp : latest;
     }, "");
 
-    console.log("client", client);
     return {
       clientName: client.name,
       managerName: vendor.name,
@@ -72,8 +71,9 @@ export const transformDataProviders = (
       documentId: doc.id,
       title: doc.documentType as string,
       status: doc.validStatus as DocumentStatus,
-      fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
+      fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null,
       fileType: doc.fileType as string,
+      rejectionReason: doc.rejectedReason || null,
     }));
 
     // Determine the latest timestamp for the "fecha" field
@@ -172,10 +172,9 @@ export const HomeAdmin = () => {
         },
       });
       const fetchedData: IClientDocumentsResponse = await response.json();
-
       if (fetchedData.success) {
         const transformedData = transformData(fetchedData);
-        console.log("transformedData", transformedData);
+        console.log("Transformed data:", transformedData);
         setDataCliente(transformedData);
       } else {
         setError(fetchedData.message || "Failed to fetch data");
@@ -201,7 +200,6 @@ export const HomeAdmin = () => {
 
       if (fetchedData.success) {
         const transformedData = transformDataProviders(fetchedData);
-        console.log(transformedData);
         setDataProveedor(transformedData);
       } else {
         setError(fetchedData.message || "Failed to fetch data");
@@ -219,11 +217,24 @@ export const HomeAdmin = () => {
     fetchProviderData();
   }, [fetchClientData, fetchProviderData]);
 
+  // Fetch data function
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    await fetchClientData();
+    await fetchProviderData();
+    setLoading(false);
+  }, [fetchClientData, fetchProviderData]);
+
   if (loading) {
     return <LoadingComponent />;
   }
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+  };
+
+  // Call this function when a document is approved or rejected
+  const refreshData = () => {
+    fetchData();
   };
 
   return (
@@ -253,12 +264,13 @@ export const HomeAdmin = () => {
                 <SearchComponent onSearch={handleSearch} />
               </div>
             </div>
-            <div className={styles["topContainer"]}>
+            <div className={styles["tablesContainer"]}>
               <div className={styles[""]}>
                 <PendingTable
                   data={filteredClienteData}
                   tableTitle="Documentos Pendientes del Cliente"
                   clientType="Cliente"
+                  onRefresh={refreshData} 
                 />
               </div>
               <div className={styles[""]}>
@@ -266,10 +278,10 @@ export const HomeAdmin = () => {
                   data={filteredProveedorData}
                   tableTitle="Documentos Pendientes del Proveedor"
                   clientType="Proveedor"
+                  onRefresh={refreshData} 
                 />
               </div>
             </div>
-            <div className={styles["bottomContainer"]}></div>
           </div>
         </div>
       </div>

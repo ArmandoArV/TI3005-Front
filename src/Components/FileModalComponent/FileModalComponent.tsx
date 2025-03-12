@@ -11,6 +11,7 @@ interface IFileModalProps {
   documentId: string;
   ownerId: string;
   ownerType: string;
+  onRefresh: () => void;
 }
 
 export const FileModal: React.FC<IFileModalProps> = ({
@@ -20,6 +21,7 @@ export const FileModal: React.FC<IFileModalProps> = ({
   documentId,
   ownerId,
   ownerType,
+  onRefresh
 }) => {
   const [showReasonModal, setShowReasonModal] = useState(false);
 
@@ -45,7 +47,10 @@ export const FileModal: React.FC<IFileModalProps> = ({
           .then((result) => {
             if (result.success) {
               console.log("Document approved successfully");
-              showSuccessAlert("Éxito", "Documento aprobado exitosamente", onClose);
+              showSuccessAlert("Éxito", "Documento aprobado exitosamente", () => {
+                onClose(); // Close the modal
+                onRefresh(); // Refresh the table data
+              });
             } else {
               console.error("Failed to approve document", result.message);
               showErrorAlert("Error", "No se pudo aprobar el documento");
@@ -59,7 +64,7 @@ export const FileModal: React.FC<IFileModalProps> = ({
         console.log("Approval cancelled");
       }
     );
-  }, [documentId, ownerId, ownerType, onClose]);
+  }, [documentId, ownerId, ownerType, onClose, onRefresh]);
 
   const handleReject = () => {
     setShowReasonModal(true);
@@ -71,7 +76,6 @@ export const FileModal: React.FC<IFileModalProps> = ({
 
   const handleSendReason = useCallback(
     async (ownerId: string, id: string, ownerType: string, reason: string) => {
-      console.log("Send Reason", { ownerId, id, ownerType, reason });
       const requestBody = {
         id: id,
         rejectedReason: reason,
@@ -90,11 +94,10 @@ export const FileModal: React.FC<IFileModalProps> = ({
         const result = await response.json();
         if (result.success) {
           console.log("Document rejected successfully");
-          showSuccessAlert(
-            "Éxito",
-            "Documento rechazado exitosamente",
-            onClose
-          );
+          showSuccessAlert("Éxito", "Documento rechazado exitosamente", () => {
+            onClose(); // Close the modal
+            onRefresh(); // Refresh the table data
+          });
         } else {
           console.error("Failed to reject document", result.message);
           showErrorAlert("Error", "No se pudo rechazar el documento");
@@ -103,7 +106,7 @@ export const FileModal: React.FC<IFileModalProps> = ({
         console.error("An error occurred while rejecting the document", error);
       }
     },
-    []
+    [onClose, onRefresh]
   );
 
   console.log("FileUrl", fileUrl);

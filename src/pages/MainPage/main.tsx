@@ -22,7 +22,7 @@ export const MainPage = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); // Prevent the default form submission behavior
+        e.preventDefault();
 
         // Validate email and password
         if (!emailText || !passwordText) {
@@ -33,11 +33,10 @@ export const MainPage = () => {
 
         if (!regex.email.test(emailText)) {
             setError("Invalid email format");
-            showErrorAlert("Error", "Invalid email format");
+            showErrorAlert("Error", "¡Formato de correo electrónico inválido!");
             return;
         }
 
-        // Prepare login request payload
         const loginData = {
             email: emailText,
             password: passwordText,
