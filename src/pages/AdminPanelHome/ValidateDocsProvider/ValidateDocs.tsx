@@ -8,6 +8,8 @@ import { API_URL } from "../../../Constants";
 import { showSuccessAlert, showErrorAlert } from "../../../Util/AlertUtil";
 import { DocumentMetadata } from "../../../Interfaces/IDocumentMetadata";
 import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingComponent";
+import { redirectToHilados } from "../ValidateDocsCustomer/ValidateDocsCustomer";
+
 export const DocumentosProveedor = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -85,7 +87,7 @@ export const DocumentosProveedor = () => {
 
         const data = await response.json();
         console.log(data);
-        showSuccessAlert("Success", "Documentos enviados correctamente");
+        showSuccessAlert("Success", "Documentos enviados correctamente", redirectToHilados);
       } catch (error) {
         console.error("Error sending documents:", error);
         showErrorAlert(
