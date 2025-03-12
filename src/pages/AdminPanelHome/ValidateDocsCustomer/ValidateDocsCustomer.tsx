@@ -12,7 +12,7 @@ import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingCo
 
 
 export const redirectToHilados = () => {
-    window.location.href = "https://www.hilados.com.mx/";
+    window.location.href = "https://www.hiladosdealtacalidad.com/";
 };
 
 export const DocumentosCliente = () => {
