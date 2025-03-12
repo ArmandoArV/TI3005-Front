@@ -9,12 +9,11 @@ import AuthRoute from "../../../Components/AuthComponent/AuthComponent";
 import { FetchedData } from "../../../Interfaces/IFetchedDataDocuments";
 import { IClientRow } from "../../../Interfaces/IClientRow";
 import { DocumentStatus, IDocument } from "../../../Interfaces/IDocument";
-import {
-  IProviderDocumentsResponse,
-} from "../../../Interfaces/IProviderInterfaces";
+import { IProviderDocumentsResponse } from "../../../Interfaces/IProviderInterfaces";
 import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingComponent";
 import FilterComponent from "../../../Components/FilterComponent/FilterComponent";
 import SearchComponent from "../../../Components/SearchComponent/SearchComponent";
+import { IClientDocumentsResponse } from "../../../Interfaces/IClientInterfaces";
 const extractFileId = (fileUrl: string): string | null => {
   const regex = /\/d\/([^\/]+)\/view/;
   const match = fileUrl.match(regex);
@@ -26,16 +25,16 @@ const transformFileUrl = (fileUrl: string): string | null => {
   return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : null;
 };
 
-const transformData = (fetchedData: FetchedData): IClientRow[] => {
+const transformData = (fetchedData: IClientDocumentsResponse): IClientRow[] => {
   return fetchedData.clients.map((clientData) => {
     const { client, vendor, documents } = clientData;
 
     // Map documents to the IDocument structure
     const transformedDocuments: IDocument[] = documents.map((doc) => ({
-      title: doc.documentType,
-      status: doc.validStatus,
+      title: doc.documentType as string,
+      status: doc.validStatus as DocumentStatus,
       fileUrl: doc.fileUrl ? transformFileUrl(doc.fileUrl) : null, // Transform the file URL
-      fileType: doc.fileType,
+      fileType: doc.fileType as string,
     }));
 
     // Determine the latest timestamp for the "fecha" field
@@ -48,10 +47,12 @@ const transformData = (fetchedData: FetchedData): IClientRow[] => {
     return {
       clientName: client.name,
       managerName: vendor.name,
-      status: client.documentsStatus,
+      status: client.documentsStatus as DocumentStatus,
       documents: transformedDocuments,
       fecha: latestTimestamp,
       id: client.id,
+      ownerId: client.id.toString(),
+      ownerType: "Client",
     };
   });
 };
@@ -83,6 +84,9 @@ const transformDataProviders = (
       status: provider.documentsStatus as DocumentStatus,
       documents: transformedDocuments,
       fecha: latestTimestamp,
+      id: provider.id,
+      ownerId: provider.id.toString(),
+      ownerType: "Provider",
     };
   });
 };
@@ -99,9 +103,24 @@ export const HomeAdmin = () => {
   const [filterValue, setFilterValue] = useState<string>("");
 
   const filterOptions = {
-    fechas: Array.from(new Set([...dataCliente.map((item) => item.fecha), ...dataProveedor.map((item) => item.fecha)])), // Get unique fechas
-    encargados: Array.from(new Set([...dataCliente.map((item) => item.managerName), ...dataProveedor.map((item) => item.managerName)])), // Get unique encargados
-    estatus: Array.from(new Set([...dataCliente.map((item) => item.status), ...dataProveedor.map((item) => item.status)])), // Get unique estatus
+    fechas: Array.from(
+      new Set([
+        ...dataCliente.map((item) => item.fecha),
+        ...dataProveedor.map((item) => item.fecha),
+      ])
+    ), // Get unique fechas
+    encargados: Array.from(
+      new Set([
+        ...dataCliente.map((item) => item.managerName),
+        ...dataProveedor.map((item) => item.managerName),
+      ])
+    ), // Get unique encargados
+    estatus: Array.from(
+      new Set([
+        ...dataCliente.map((item) => item.status),
+        ...dataProveedor.map((item) => item.status),
+      ])
+    ), // Get unique estatus
   };
 
   const applyFilter = (data: IClientRow[]) => {
@@ -123,15 +142,15 @@ export const HomeAdmin = () => {
     }
 
     if (searchTerm) {
-      filteredData = filteredData.filter((row) =>
-        row.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.managerName.toLowerCase().includes(searchTerm.toLowerCase())
+      filteredData = filteredData.filter(
+        (row) =>
+          row.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          row.managerName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     return filteredData;
   };
-
 
   // Filtered data based on selected filters
   const filteredClienteData = applyFilter(dataCliente);
@@ -147,7 +166,7 @@ export const HomeAdmin = () => {
           Authorization: `Bearer ${document.cookie.split("=")[1]}`,
         },
       });
-      const fetchedData: FetchedData = await response.json();
+      const fetchedData: IClientDocumentsResponse = await response.json();
 
       if (fetchedData.success) {
         const transformedData = transformData(fetchedData);
@@ -212,9 +231,7 @@ export const HomeAdmin = () => {
 
           <div className={styles["mainContent"]}>
             <div className={styles["welcomeContainer"]}>
-              <h2
-                className={styles["welcomeText"]}
-              >Bienvenido</h2>
+              <h2 className={styles["welcomeText"]}>Bienvenido</h2>
             </div>
             <div className={styles["filterContainer"]}>
               <div className={styles["leftFilterContainer"]}>
