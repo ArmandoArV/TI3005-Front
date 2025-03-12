@@ -2,7 +2,8 @@ export type DocumentStatus =
   | "Por validar"
   | "Aceptado"
   | "Rechazado"
-  | "Sin entrega";
+  | "Sin entrega"
+  | "En espera";
 
 export interface IDocument {
   title: string;
