@@ -70,7 +70,8 @@ export const MainPage = () => {
     };
 
 
-
+    /*                            <p className={styles.forgotPassword}>¿Olvidaste tu contraseña?</p>
+     */
     return (
         <main className={styles.background}>
             <div className={styles.main}>
@@ -109,7 +110,6 @@ export const MainPage = () => {
                     </div>
                     <div className={styles.bottomContainer}>
                         <div className={styles.leftBottomContainer}>
-                            <p className={styles.forgotPassword}>¿Olvidaste tu contraseña?</p>
                         </div>
                         <div className={styles.rightBottomContainer}>
                             <ButtonComponent

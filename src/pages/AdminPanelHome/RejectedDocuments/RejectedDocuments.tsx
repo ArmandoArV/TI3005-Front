@@ -9,7 +9,7 @@ import AuthRoute from "../../../Components/AuthComponent/AuthComponent";
 import { FetchedData } from "../../../Interfaces/IFetchedDataDocuments";
 import { IClientRow } from "../../../Interfaces/IClientRow";
 import { IDocument } from "../../../Interfaces/IDocument";
-
+import { LoadingComponent } from "../../../Components/LoadingComponent/LoadingComponent";
 
 const extractFileId = (fileUrl: string): string | null => {
     const regex = /\/d\/([^\/]+)\/view/;
@@ -117,7 +117,7 @@ export const RejectedDocuments = () => {
     }, [fetchClientData, fetchProviderData]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingComponent />;
     }
 
 

@@ -8,20 +8,26 @@ interface MenuOption {
     label: string;
     link: string;
     image: string;
-    active?: boolean;  // Optional to mark the active page
+    active?: boolean;
 }
 
 interface ILateralNavbar {
     options: MenuOption[];
 }
-
+/*
+                    <img src={collapseIcon} alt="collapse" className={styles["collapse"]} />
+*/
 export default function LateralNavbarComponent({ options }: ILateralNavbar) {
+
+    const deleteTokenCookie = () => {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
     return (
         <div className={styles["lateralNavbar"]}>
             <div className={styles["lateralNavbar__top"]}>
                 <div className={styles["header"]}>
                     <h1 className={styles["title"]}>Menú</h1>
-                    <img src={collapseIcon} alt="collapse" className={styles["collapse"]} />
+
                 </div>
                 <div className={styles["lateralNavbar__bottom__options"]}>
                     {options.map((option) => (
@@ -38,7 +44,9 @@ export default function LateralNavbarComponent({ options }: ILateralNavbar) {
                 </div>
             </div>
             <div className={styles["lateralNavbar__bottom"]}>
-                <Link to="/" className={styles["lateralNavbar__bottom__logout"]}>
+                <Link to="/" className={styles["lateralNavbar__bottom__logout"]}
+                    onClick={deleteTokenCookie}
+                >
                     <img src={logoutIcon} alt="logout" />
                     <span>Cerrar sesión</span>
                 </Link>
