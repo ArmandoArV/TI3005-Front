@@ -57,6 +57,7 @@
   width: 100%; /* Ensure it takes the full width */
   text-align: left; /* Align the text inside to the left */
   align-self: flex-start; /* Align this specific container to the start (left) */
+  margin-left: 5em;
 }
 
 .welcomeText {
