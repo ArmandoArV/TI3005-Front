@@ -99,7 +99,7 @@ export const PendingTable: React.FC<PendingTableProps> = ({
                   </td>
                   <td>{row.clientName}</td>
                   <td>{row.managerName}</td>
-                  <td>{`${row.documents.length}/3`}</td>
+                  <td>{`${row.documents.length}/${row.documents.length}`}</td>
                   <td>
                     {new Date(row.fecha).toLocaleDateString("es-ES", {
                       year: "numeric",

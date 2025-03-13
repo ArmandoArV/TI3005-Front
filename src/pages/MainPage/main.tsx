@@ -51,7 +51,7 @@ export const MainPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Invalid email or password");
+                throw new Error("Correo electrónico o contraseña incorrectos");
             }
 
             const data = await response.json();
